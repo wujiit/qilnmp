@@ -1,6 +1,7 @@
 # QILNMP
 
-QILNMP 是基于 OneinStack 的社区维护分支，面向 LNMP/LAMP 快速部署与日常运维。
+QILNMP 是基于 OneinStack 的社区维护分支，面向 LNMP/LAMP 快速部署与日常运维。  
+推荐按需到官方下载文件包本地上传，或者自己搭建软件镜像源网站。
 
 ## Fork / 版权说明
 
@@ -136,15 +137,15 @@ mirror_fallback_links='https://mirror-b.example.com https://mirror-c.example.com
 
 镜像相关域名说明：
 
-- 默认配置下，主镜像域名是 `one.jingxialai.com`，对应 `options.conf` 里的 `mirror_link`
+- 默认配置下，主镜像域名是 `one.jingxialai.com`，（仅适合中国内地服务器）对应 `options.conf` 里的 `mirror_link`
 - `mirror_fallback_links` 默认留空；只有你自己填写后，脚本才会访问这些备用镜像域名
 - 例如你可以配置 `mirror_fallback_links='https://mirror.dal.ao'`，这时 `mirror.dal.ao` 才会作为备用镜像参与下载和版本同步
-- README 里出现的 `mirror.dal.ao` 现在仅作为示例镜像域名，不是脚本运行逻辑里写死的强制访问目标
+- README 里出现的 `mirror.dal.ao` 现在仅作为示例镜像域名，也是推荐的第三方镜像网站
 
-补充说明：
+说明：
 
 - 下载和版本同步现在都只读取 `mirror_link` 与 `mirror_fallback_links`
-- 脚本运行逻辑里不再额外内置其他镜像域名
+
 
 #### 4.1 当前代码可能访问的外部域名
 
@@ -228,10 +229,6 @@ PHP / PECL / Composer / phpMyAdmin：
 - 上面这一组主要在启用阿里云 OSS、腾讯云 COS、七牛云、又拍云、AWS S3 等备份能力时才会访问
 - `dbxcli` 由当前 `mirror_link` 下载，但其运行时访问的 Dropbox API 域名未在 shell 脚本中硬编码
 
-补充说明：
-
-- 当前代码里未发现硬编码的公网独立 IP 下载/访问目标
-- 代码里出现的 `127.0.0.1`、`localhost`、`0.0.0.0`、`192.168.1.1` 主要是本机监听、反向代理或示例地址，不属于外部访问目标
 
 常见 LNMP 离线包文件名清单（可直接按表下载到 `src/`）：
 
@@ -610,6 +607,17 @@ apt-get -y install perl
 - Redis 服务端已安装并运行
 - 网站端已正确配置对象缓存插件
 
+#### 和oneinstack关系
+
+- oneinstack由于众所周知的原因，这里就不说了，因为我习惯了oneinstack之前的操作方式，所以就根据自己的需求进行单独维护。
+- 各种命令和oneinstack是一样，这就是一个分支，只是在原来的代码上进行优化
+
+#### 自己搭建镜像网站项目推荐
+
+- https://github.com/dalao-org/MirrorOne
+- 如果你的服务器不是中国内地的服务器，直接用他这个镜像网站就行的。
+  
+  
 ## English Summary
 
 QILNMP is a community-maintained fork of OneinStack focused on practical LNMP/LAMP deployment and maintenance.
