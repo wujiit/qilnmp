@@ -7,7 +7,7 @@
 - 版本来源：优先使用当前安装时生效的版本变量（`versions.txt` + 镜像版本同步）
 - 下载优先级：本地 `src/` > `mirror_link` > `custom_src_urls.conf` > `src_url_backup` > `mirror_fallback_links` > 官方回源
 
-## 1. LNMP 最常见必备包（Nginx + PHP 8.4/8.5）
+## 1. LNMP 最常见必备包（Nginx + PHP 8.2-8.5）
 
 | 组件 | 放到 `src/` 的文件名 | 官方下载示例 |
 |---|---|---|
@@ -15,7 +15,7 @@
 | PCRE | `pcre-<pcre_ver>.tar.gz` | `https://sourceforge.net/projects/pcre/files/pcre/<pcre_ver>/pcre-<pcre_ver>.tar.gz` |
 | jemalloc | `jemalloc-<jemalloc_ver>.tar.bz2` | `https://github.com/jemalloc/jemalloc/releases/download/<ver>/jemalloc-<jemalloc_ver>.tar.bz2` |
 | OpenSSL（给 Nginx） | `openssl-<openssl3_ver>.tar.gz` | `https://github.com/openssl/openssl/releases/download/openssl-<openssl3_ver>/openssl-<openssl3_ver>.tar.gz` |
-| PHP | `php-<php84_ver>.tar.gz` / `php-<php85_ver>.tar.gz` | `https://www.php.net/distributions/php-<php_ver>.tar.gz` |
+| PHP | `php-<php82_ver>.tar.gz` / `php-<php83_ver>.tar.gz` / `php-<php84_ver>.tar.gz` / `php-<php85_ver>.tar.gz` | `https://www.php.net/distributions/php-<php_ver>.tar.gz` |
 | libiconv | `libiconv-<libiconv_ver>.tar.gz` | `https://ftp.gnu.org/pub/gnu/libiconv/libiconv-<libiconv_ver>.tar.gz` |
 | curl | `curl-<curl_ver>.tar.gz` | `https://curl.se/download/curl-<curl_ver>.tar.gz` |
 | libmcrypt（兼容） | `libmcrypt-<libmcrypt_ver>.tar.gz` | `https://downloads.sourceforge.net/project/mcrypt/Libmcrypt/<libmcrypt_ver>/libmcrypt-<libmcrypt_ver>.tar.gz` |
@@ -44,6 +44,27 @@
 
 - `mysql-<mysql80_ver>.tar.gz`
 - `boost_<x_y_z>.tar.gz`（脚本会按 `boost_ver` 计算出文件名）
+
+### MySQL 9.0
+
+- 二进制安装：`mysql-<mysql90_ver>-linux-glibc2.28-x86_64.tar.xz`
+- 源码安装：`mysql-<mysql90_ver>.tar.gz`
+- Boost：`boost_<x_y_z>.tar.gz`（脚本优先按 `boost_mysql90_ver` 计算）
+
+## 2.1 MariaDB 常见包（按安装方式）
+
+### MariaDB 10.11 / 10.5 / 10.4 / 11.4
+
+- 二进制安装：`mariadb-<mariadb_ver>-linux-systemd-x86_64.tar.gz`
+- 源码安装：`mariadb-<mariadb_ver>.tar.gz`
+- Boost：`boost_<x_y_z>.tar.gz`（源码安装时需要）
+
+常见版本变量：
+
+- `mariadb1011_ver`
+- `mariadb105_ver`
+- `mariadb104_ver`
+- `mariadb114_ver`
 
 ## 3. 常见可选组件（按需）
 

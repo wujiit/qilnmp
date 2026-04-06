@@ -70,7 +70,7 @@ Show_Help() {
   --nodejs                    Install Nodejs
   --tomcat_option [1-4]       Install Tomcat version
   --jdk_option [1-3]          Install JDK version
-  --db_option [1-15]          Install DB version
+  --db_option [1-16]          Install DB version
   --dbinstallmethod [1-2]     DB install method, default: 1 binary install
   --dbrootpwd [password]      DB super password
   --pureftpd                  Install Pure-Ftpd
@@ -229,9 +229,9 @@ while :; do
   --db_option)
     db_option=$2
     shift 2
-    if [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^15$ ]]; then
+    if [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^1[5-6]$ ]]; then
       [ -d "${db_install_dir}/support-files" ] && {
-        echo "${CWARNING}MySQL already installed! ${CEND}"
+        echo "${CWARNING}Database already installed! ${CEND}"
         unset db_option
       }
     elif [ "${db_option}" == '13' ]; then
@@ -245,7 +245,7 @@ while :; do
         unset db_option
       }
     else
-      echo "${CWARNING}db_option input error! Please only input number 1~15${CEND}"
+      echo "${CWARNING}db_option input error! Please only input number 1~16${CEND}"
       exit 1
     fi
     ;;
@@ -584,15 +584,16 @@ if [ ${ARG_NUM} == 0 ]; then
           echo -e "\t${CMSG}13${CEND}. Install PostgreSQL"
           echo -e "\t${CMSG}14${CEND}. Install MongoDB"
           echo -e "\t${CMSG}15${CEND}. Install MySQL-9.0"
+          echo -e "\t${CMSG}16${CEND}. Install MariaDB-11.4"
           read -e -p "Please input a number:(Default ${db_recommend_option} press Enter) " db_option
           db_option=${db_option:-${db_recommend_option}}
-          if [[ "${db_option}" =~ ^[1-9]$|^1[0-5]$ ]]; then
+          if [[ "${db_option}" =~ ^[1-9]$|^1[0-6]$ ]]; then
             if [ "${db_option}" == '13' ]; then
               [ -e "${pgsql_install_dir}/bin/psql" ] && { echo "${CWARNING}PostgreSQL already installed! ${CEND}"; unset db_option; break; }
             elif [ "${db_option}" == '14' ]; then
               [ -e "${mongo_install_dir}/bin/mongo" ] && { echo "${CWARNING}MongoDB already installed! ${CEND}"; unset db_option; break; }
             else
-              [ -d "${db_install_dir}/support-files" ] && { echo "${CWARNING}MySQL already installed! ${CEND}"; unset db_option; break; }
+              [ -d "${db_install_dir}/support-files" ] && { echo "${CWARNING}Database already installed! ${CEND}"; unset db_option; break; }
             fi
             while :; do
               if [ "${db_option}" == '13' ]; then
@@ -602,7 +603,7 @@ if [ ${ARG_NUM} == 0 ]; then
                 read -e -p "Please input the root password of MongoDB(default: ${dbmongopwd}): " dbpwd
                 dbpwd=${dbpwd:-${dbmongopwd}}
               else
-                read -e -p "Please input the root password of MySQL(default: ${dbrootpwd}): " dbpwd
+                read -e -p "Please input the root password of the Database(default: ${dbrootpwd}): " dbpwd
                 dbpwd=${dbpwd:-${dbrootpwd}}
               fi
               [ -n "`echo ${dbpwd} | grep '[+|&]'`" ] && { echo "${CWARNING}input error,not contain a plus sign (+) and & ${CEND}"; continue; }
@@ -620,7 +621,7 @@ if [ ${ARG_NUM} == 0 ]; then
               fi
             done
             # choose install methods
-            if [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^15$ ]]; then
+            if [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^1[5-6]$ ]]; then
               while :; do echo
                 echo "Please choose installation of the database:"
                 echo -e "\t${CMSG}1${CEND}. Install database from binary package."
@@ -640,7 +641,7 @@ if [ ${ARG_NUM} == 0 ]; then
             fi
             break
           else
-            echo "${CWARNING}input error! Please only input number 1~15${CEND}"
+            echo "${CWARNING}input error! Please only input number 1~16${CEND}"
           fi
         done
       fi
@@ -941,7 +942,7 @@ OUTIP_STATE=$(./include/ois.${ARCH} ip_state)
   echo "${CWARNING}MySQL-9.0 binary package requires x86_64 and glibc>=2.28, switch to source install.${CEND}"
   dbinstallmethod=2
 }
-if [ "${QILNMP_FORCE_DB_SOURCE}" != "1" ] && [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^15$ ]] && [ "${dbinstallmethod}" == "2" ] && [[ "${ARCH}" =~ x86_64|amd64 ]] && [ "${SERVER_MEM_MB}" -le 6144 ]; then
+if [ "${QILNMP_FORCE_DB_SOURCE}" != "1" ] && [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^1[5-6]$ ]] && [ "${dbinstallmethod}" == "2" ] && [[ "${ARCH}" =~ x86_64|amd64 ]] && [ "${SERVER_MEM_MB}" -le 6144 ]; then
   if [ "${db_option}" != "15" ] || [ "${mysql90_binary_supported}" == "y" ]; then
     echo "${CWARNING}Low-memory profile (${SERVER_MEM_MB}MB) detected, auto switch DB install method from source to binary to reduce compile OOM risk.${CEND}"
     dbinstallmethod=1
@@ -980,7 +981,7 @@ startTime=`date +%s`
 Install_openSSL | tee -a ${oneinstack_dir}/install.log
 
 # Jemalloc
-if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^15$ ]]; then
+if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^1[5-6]$ ]]; then
   . include/jemalloc.sh
   Install_Jemalloc | tee -a ${oneinstack_dir}/install.log
 fi
@@ -1047,6 +1048,10 @@ case "${db_option}" in
   15)
     . include/mysql-9.0.sh
     Install_MySQL90 2>&1 | tee -a ${oneinstack_dir}/install.log
+    ;;
+  16)
+    . include/mariadb-11.4.sh
+    Install_MariaDB114 2>&1 | tee -a ${oneinstack_dir}/install.log
     ;;
 esac
 
@@ -1369,10 +1374,10 @@ echo "Total QILNMP Install Time: ${CQUESTION}${installTime}${CEND} minutes"
 [ "${apache_flag}" == 'y' ] && echo -e "\n$(printf "%-32s" "Apache install dir":)${CMSG}${apache_install_dir}${CEND}"
 [ "${caddy_flag}" == 'y' ] && echo -e "\n$(printf "%-32s" "Caddy install dir":)${CMSG}${caddy_install_dir}${CEND}"
 [[ "${tomcat_option}" =~ ^[1-4]$ ]] && echo -e "\n$(printf "%-32s" "Tomcat install dir":)${CMSG}${tomcat_install_dir}${CEND}"
-[[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^15$ ]] && echo -e "\n$(printf "%-32s" "Database install dir:")${CMSG}${db_install_dir}${CEND}"
-[[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^15$ ]] && echo "$(printf "%-32s" "Database data dir:")${CMSG}${db_data_dir}${CEND}"
-[[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^15$ ]] && echo "$(printf "%-32s" "Database user:")${CMSG}root${CEND}"
-[[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^15$ ]] && echo "$(printf "%-32s" "Database password:")${CMSG}${dbrootpwd}${CEND}"
+[[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^1[5-6]$ ]] && echo -e "\n$(printf "%-32s" "Database install dir:")${CMSG}${db_install_dir}${CEND}"
+[[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^1[5-6]$ ]] && echo "$(printf "%-32s" "Database data dir:")${CMSG}${db_data_dir}${CEND}"
+[[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^1[5-6]$ ]] && echo "$(printf "%-32s" "Database user:")${CMSG}root${CEND}"
+[[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^1[5-6]$ ]] && echo "$(printf "%-32s" "Database password:")${CMSG}${dbrootpwd}${CEND}"
 [ "${db_option}" == '13' ] && echo -e "\n$(printf "%-32s" "PostgreSQL install dir:")${CMSG}${pgsql_install_dir}${CEND}"
 [ "${db_option}" == '13' ] && echo "$(printf "%-32s" "PostgreSQL data dir:")${CMSG}${pgsql_data_dir}${CEND}"
 [ "${db_option}" == '13' ] && echo "$(printf "%-32s" "PostgreSQL user:")${CMSG}postgres${CEND}"
