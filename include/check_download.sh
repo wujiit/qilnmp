@@ -41,7 +41,7 @@ checkDownload() {
   fi
 
   # jemalloc
-  if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^15$ ]]; then
+  if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^1[5-6]$ ]]; then
     echo "Download jemalloc..."
     src_url=${mirror_link}/src/jemalloc-${jemalloc_ver}.tar.bz2 && Download_src
   fi
@@ -117,9 +117,9 @@ checkDownload() {
     src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
   fi
 
-  if [[ "${db_option}" =~ ^[1-9]$|^1[0-5]$ ]]; then
-    if [[ "${db_option}" =~ ^[1,2,5,6,7,9]$|^10$|^15$ ]] && [ "${dbinstallmethod}" == "2" ]; then
-      [[ "${db_option}" =~ ^[2,5,6,7]$|^10$ ]] && boost_ver=${boost_oldver}
+  if [[ "${db_option}" =~ ^[1-9]$|^1[0-6]$ ]]; then
+    if [[ "${db_option}" =~ ^[125679]$|^10$|^15$|^16$ ]] && [ "${dbinstallmethod}" == "2" ]; then
+      [[ "${db_option}" =~ ^[2567]$|^10$|^16$ ]] && boost_ver=${boost_oldver}
       [[ "${db_option}" =~ ^9$ ]] && boost_ver=${boost_percona_ver}
       [[ "${db_option}" =~ ^1$|^15$ ]] && boost_ver=${boost_mysql90_ver:-${boost_ver}}
       echo "Download boost..."
@@ -249,10 +249,13 @@ checkDownload() {
           kill -9 $$; exit 1;
         fi
         ;;
-      [5-8])
+      5|6|7|8|16)
 	case "${db_option}" in
           5)
             mariadb_ver=${mariadb1011_ver}
+	    ;;
+          16)
+            mariadb_ver=${mariadb114_ver}
 	    ;;
           6)
             mariadb_ver=${mariadb105_ver}
@@ -577,15 +580,43 @@ checkDownload() {
     src_url=${mirror_link}/src/libsodium-${libsodium_ver}.tar.gz && Download_src
     src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz && Download_src
   elif [ "${php_option}" == '12' ] || [ "${mphp_ver}" == '82' ]; then
-    src_url=${mirror_link}/src/php-${php82_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/libsodium-${libsodium_up_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz && Download_src
+    src_url=${mirror_link}/src/php-${php82_ver}.tar.gz
+    src_url_backup=https://www.php.net/distributions/php-${php82_ver}.tar.gz
+    Download_src; unset src_url_backup
+    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz
+    src_url_backup=https://github.com/P-H-C/phc-winner-argon2/archive/refs/tags/${argon2_ver}.tar.gz
+    Download_src; unset src_url_backup
+    src_url=${mirror_link}/src/libsodium-${libsodium_up_ver}.tar.gz
+    src_url_backup=https://download.libsodium.org/libsodium/releases/libsodium-${libsodium_up_ver}.tar.gz
+    Download_src; unset src_url_backup
+    src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz
+    src_url_backup=https://libzip.org/download/libzip-${libzip_ver}.tar.gz
+    Download_src; unset src_url_backup
+    src_url=${mirror_link}/src/libxml2-${libxml2_ver}.tar.xz
+    src_url_backup=https://download.gnome.org/sources/libxml2/$(echo ${libxml2_ver} | awk -F. '{print $1"."$2}')/libxml2-${libxml2_ver}.tar.xz
+    Download_src; unset src_url_backup
+    src_url=${mirror_link}/src/zlib-${zlib_ver}.tar.gz
+    src_url_backup=https://zlib.net/zlib-${zlib_ver}.tar.gz
+    Download_src; unset src_url_backup
   elif [ "${php_option}" == '13' ] || [ "${mphp_ver}" == '83' ]; then
-    src_url=${mirror_link}/src/php-${php83_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/libsodium-${libsodium_up_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz && Download_src
+    src_url=${mirror_link}/src/php-${php83_ver}.tar.gz
+    src_url_backup=https://www.php.net/distributions/php-${php83_ver}.tar.gz
+    Download_src; unset src_url_backup
+    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz
+    src_url_backup=https://github.com/P-H-C/phc-winner-argon2/archive/refs/tags/${argon2_ver}.tar.gz
+    Download_src; unset src_url_backup
+    src_url=${mirror_link}/src/libsodium-${libsodium_up_ver}.tar.gz
+    src_url_backup=https://download.libsodium.org/libsodium/releases/libsodium-${libsodium_up_ver}.tar.gz
+    Download_src; unset src_url_backup
+    src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz
+    src_url_backup=https://libzip.org/download/libzip-${libzip_ver}.tar.gz
+    Download_src; unset src_url_backup
+    src_url=${mirror_link}/src/libxml2-${libxml2_ver}.tar.xz
+    src_url_backup=https://download.gnome.org/sources/libxml2/$(echo ${libxml2_ver} | awk -F. '{print $1"."$2}')/libxml2-${libxml2_ver}.tar.xz
+    Download_src; unset src_url_backup
+    src_url=${mirror_link}/src/zlib-${zlib_ver}.tar.gz
+    src_url_backup=https://zlib.net/zlib-${zlib_ver}.tar.gz
+    Download_src; unset src_url_backup
   elif [ "${php_option}" == '14' ] || [ "${mphp_ver}" == '84' ]; then
     src_url=${mirror_link}/src/php-${php84_ver}.tar.gz
     src_url_backup=https://www.php.net/distributions/php-${php84_ver}.tar.gz

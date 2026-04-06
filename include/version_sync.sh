@@ -244,6 +244,26 @@ Ensure_mirror_compatible_core_versions() {
     fi
   fi
 
+  if ! grep -Fxq "php-${php82_ver}.tar.gz" "${resource_file}"; then
+    latest_ver=$(grep -E '^php-8\.2\.[0-9]+\.tar\.gz$' "${resource_file}" | sed -E 's/^php-(8\.2\.[0-9]+)\.tar\.gz$/\1/' | sort -V | tail -1)
+    if [ -n "${latest_ver}" ]; then
+      old_ver=${php82_ver}
+      php82_ver=${latest_ver}
+      let "adjusted_count++"
+      echo "${CWARNING}Mirror does not provide php-${old_ver}.tar.gz, auto-adjust php82_ver=${php82_ver}${CEND}"
+    fi
+  fi
+
+  if ! grep -Fxq "php-${php83_ver}.tar.gz" "${resource_file}"; then
+    latest_ver=$(grep -E '^php-8\.3\.[0-9]+\.tar\.gz$' "${resource_file}" | sed -E 's/^php-(8\.3\.[0-9]+)\.tar\.gz$/\1/' | sort -V | tail -1)
+    if [ -n "${latest_ver}" ]; then
+      old_ver=${php83_ver}
+      php83_ver=${latest_ver}
+      let "adjusted_count++"
+      echo "${CWARNING}Mirror does not provide php-${old_ver}.tar.gz, auto-adjust php83_ver=${php83_ver}${CEND}"
+    fi
+  fi
+
   if ! grep -Fxq "php-${php84_ver}.tar.gz" "${resource_file}"; then
     latest_ver=$(grep -E '^php-8\.4\.[0-9]+\.tar\.gz$' "${resource_file}" | sed -E 's/^php-(8\.4\.[0-9]+)\.tar\.gz$/\1/' | sort -V | tail -1)
     if [ -n "${latest_ver}" ]; then
@@ -261,6 +281,16 @@ Ensure_mirror_compatible_core_versions() {
       php85_ver=${latest_ver}
       let "adjusted_count++"
       echo "${CWARNING}Mirror does not provide php-${old_ver}.tar.gz, auto-adjust php85_ver=${php85_ver}${CEND}"
+    fi
+  fi
+
+  if [ -n "${mariadb114_ver}" ] && ! grep -Fxq "mariadb-${mariadb114_ver}.tar.gz" "${resource_file}"; then
+    latest_ver=$(grep -E '^mariadb-11\.4\.[0-9]+\.tar\.gz$' "${resource_file}" | sed -E 's/^mariadb-(11\.4\.[0-9]+)\.tar\.gz$/\1/' | sort -V | tail -1)
+    if [ -n "${latest_ver}" ]; then
+      old_ver=${mariadb114_ver}
+      mariadb114_ver=${latest_ver}
+      let "adjusted_count++"
+      echo "${CWARNING}Mirror does not provide mariadb-${old_ver}.tar.gz, auto-adjust mariadb114_ver=${mariadb114_ver}${CEND}"
     fi
   fi
 

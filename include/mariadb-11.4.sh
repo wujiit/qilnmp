@@ -14,8 +14,8 @@
 #       https://github.com/wujiit/qilnmp
 # Based on upstream OneinStack, maintained by QILNMP fork.
 
-declare -F Install_Modern_PHP >/dev/null 2>&1 || . include/php-modern-common.sh
+declare -F Install_MariaDB_Generic >/dev/null 2>&1 || . include/mariadb-common.sh
 
-Install_PHP82() {
-  Install_Modern_PHP "${php82_ver}" "${php82_with_ssl}" "${php82_with_curl}" "${php82_with_openssl}"
+Install_MariaDB114() {
+  Install_MariaDB_Generic "${mariadb114_ver}" "n"
 }

@@ -128,23 +128,23 @@ Normalize_Selections_For_Modern_OS() {
   [ "${MODERN_MAINSTREAM_OS}" != 'y' ] && return 0
   [ "${QILNMP_ALLOW_LEGACY}" == '1' ] && return 0
 
-  if [ -n "${php_option}" ] && [[ ! "${php_option}" =~ ^1[4-5]$ ]]; then
-    echo "${CWARNING}Modern OS profile detected, php_option=${php_option} auto-adjusted to 14 (PHP-8.4). Set QILNMP_ALLOW_LEGACY=1 to keep legacy PHP choices.${CEND}"
+  if [ -n "${php_option}" ] && [[ ! "${php_option}" =~ ^1[2-5]$ ]]; then
+    echo "${CWARNING}Modern OS profile detected, php_option=${php_option} auto-adjusted to 14 (PHP-8.4). Set QILNMP_ALLOW_LEGACY=1 to keep older PHP choices.${CEND}"
     php_option=14
   fi
 
-  if [ -n "${mphp_ver}" ] && [[ ! "${mphp_ver}" =~ ^8[4-5]$ ]]; then
-    echo "${CWARNING}Modern OS profile detected, mphp_ver=${mphp_ver} auto-adjusted to 84 (PHP-8.4). Set QILNMP_ALLOW_LEGACY=1 to keep legacy multi-PHP choices.${CEND}"
+  if [ -n "${mphp_ver}" ] && [[ ! "${mphp_ver}" =~ ^8[2-5]$ ]]; then
+    echo "${CWARNING}Modern OS profile detected, mphp_ver=${mphp_ver} auto-adjusted to 84 (PHP-8.4). Set QILNMP_ALLOW_LEGACY=1 to keep older multi-PHP choices.${CEND}"
     mphp_ver=84
   fi
 
   case "${db_option}" in
     2|3|4|9|10|11|12)
-      echo "${CWARNING}Modern OS profile detected, db_option=${db_option} auto-adjusted to 1 (MySQL-8.0). Set QILNMP_ALLOW_LEGACY=1 to keep legacy DB choices.${CEND}"
+      echo "${CWARNING}Modern OS profile detected, db_option=${db_option} auto-adjusted to 1 (MySQL-8.0). Set QILNMP_ALLOW_LEGACY=1 to keep older DB choices.${CEND}"
       db_option=1
       ;;
-    6|7|8)
-      echo "${CWARNING}Modern OS profile detected, db_option=${db_option} auto-adjusted to 5 (MariaDB-10.11). Set QILNMP_ALLOW_LEGACY=1 to keep legacy DB choices.${CEND}"
+    8)
+      echo "${CWARNING}Modern OS profile detected, db_option=${db_option} auto-adjusted to 5 (MariaDB-10.11). Set QILNMP_ALLOW_LEGACY=1 to keep older DB choices.${CEND}"
       db_option=5
       ;;
   esac
@@ -167,7 +167,7 @@ Show_Install_Recommendations() {
   echo -e "\tDatabase:  ${CMSG}${db_recommend_name}${CEND} (option ${db_recommend_option})"
   echo -e "\tDB Method: ${CMSG}${dbinstallmethod_recommend_name}${CEND} (option ${dbinstallmethod_recommend})"
   echo -e "\tPHP Cache: ${CMSG}${phpcache_recommend_name}${CEND} (option ${phpcache_recommend_option})"
-  [ "${MODERN_MAINSTREAM_OS}" == 'y' ] && echo "${CMSG}Modern OS mode is active (Rocky 9+/Debian 12+/Ubuntu 24+): legacy PHP/DB selections will be auto-normalized unless QILNMP_ALLOW_LEGACY=1.${CEND}"
+  [ "${MODERN_MAINSTREAM_OS}" == 'y' ] && echo "${CMSG}Modern OS mode is active (Rocky 9+/Debian 12+/Ubuntu 24+): PHP 8.2+ and current DB branches are kept, older legacy choices will be auto-normalized unless QILNMP_ALLOW_LEGACY=1.${CEND}"
   if [ "${mysql90_binary_supported}" != 'y' ]; then
     echo "${CWARNING}MySQL-9.0 binary package is not compatible with current architecture/glibc, source build is required.${CEND}"
   fi
@@ -192,7 +192,7 @@ Warn_If_Selection_Risky() {
     fi
   fi
 
-  if [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^15$ ]] && [ "${dbinstallmethod}" == '2' ] && [ "${SERVER_MEM_MB}" -lt 4096 ]; then
+  if [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^1[5-6]$ ]] && [ "${dbinstallmethod}" == '2' ] && [ "${SERVER_MEM_MB}" -lt 4096 ]; then
     echo "${CWARNING}Warning: Database source compilation may fail on low memory servers (<4GB), binary package is preferred when available.${CEND}"
   fi
 
