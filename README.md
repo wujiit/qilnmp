@@ -358,7 +358,24 @@ bash tools/stack_status.sh
 ./addons.sh --uninstall --ngx_lua_waf
 ```
 
-#### 6.8 vhost.sh（虚拟主机）常用参数
+#### 6.8 security.sh（基础安全模块）
+
+适用范围：
+
+- 仅针对 `Nginx/Tengine/OpenResty`
+- 通过 `limit_req/limit_conn + Fail2ban` 实现简单 CC 防护与自动封禁
+- 默认监控 `/data/wwwlogs/*nginx.log`
+- 如果某个站点配置了 `access_log off;`，该站点只能享受 Nginx 限流，无法参与 Fail2ban 自动封禁
+
+```bash
+./security.sh --install
+./security.sh --enable
+./security.sh --disable
+./security.sh --status
+./security.sh --uninstall
+```
+
+#### 6.9 vhost.sh（虚拟主机）常用参数
 
 ```bash
 ./vhost.sh --list
@@ -370,7 +387,7 @@ bash tools/stack_status.sh
 ./vhost.sh --del
 ```
 
-#### 6.9 wordpress.sh（一键部署 WordPress）
+#### 6.10 wordpress.sh（一键部署 WordPress）
 
 说明：
 
