@@ -21,8 +21,8 @@
 
 ## 目录
 
-- [项目渊源与维护声明](#项目渊源与维护声明)
-- [核心设计理念与优势](#核心设计理念与优势)
+- [项目说明与分支信息](#项目说明与分支信息)
+- [对比原版 OneinStack 的调整与精简](#对比原版-oneinstack-的调整与精简)
 - [服务器硬件智能感知与动态调优](#服务器硬件智能感知与动态调优)
 - [数据库选型指南：MySQL 8.0 vs MariaDB LTS](#数据库选型指南mysql-80-vs-mariadb-lts)
 - [操作系统支持与技术断代说明](#操作系统支持与技术断代说明)
@@ -45,36 +45,31 @@
 
 ---
 
-## 项目渊源与维护声明
+## 项目说明与分支信息
 
 - **上游原始作者**：yeho `<lj2007331 AT gmail.com>`
 - **上游原始仓库**：[oneinstack/oneinstack](https://github.com/oneinstack/oneinstack)
-- **独立分支维护者**：summer `<iticu@qq.com>`
-- **分支官方网站**：[https://qiling.jingxialai.com](https://qiling.jingxialai.com)
-- **分支代码仓库**：[https://github.com/wujiit/qilnmp](https://github.com/wujiit/qilnmp)
+- **分支维护者**：summer `<iticu@qq.com>`
+- **官方网站**：[https://qiling.jingxialai.com](https://qiling.jingxialai.com)
+- **代码仓库**：[https://github.com/wujiit/qilnmp](https://github.com/wujiit/qilnmp)
 - **开源许可证**：[Apache-2.0](https://github.com/wujiit/qilnmp/blob/master/LICENSE)
-
-> [!IMPORTANT]
-> **为什么独立维护 QILNMP 分支？**
-> 很多长期习惯 Linux 纯命令行运维的开发者都深度使用过 OneinStack。这套由 Shell 编写的自动化运维套件轻量、透明、无常驻守护进程。然而由于上游项目后期转让出售并引发社区供应链安全信任危机，曾经放心的基础套件不再让人安心。
-> 
-> 本分支基于此背景创建，旨在为开发者提供一个**纯净、完全开源可审计、剔除陈旧历史包袱（坚决移除 Apache 与 Java/Tomcat）、锁定现代高安全基线**的独立发行版。
 
 ---
 
-## 核心设计理念与优势
+## 对比原版 OneinStack 的调整与精简
 
-| 维度 | QILNMP 方案 | 传统图形面板（如宝塔 / 1Panel 等） |
-|---|---|---|
-| **后台常驻进程** | **0 常驻进程**，执行完毕即彻底释放 | 需长期常驻 1~3 个 Python/Go Web 守护进程 |
-| **内存额外开销** | **0 MB**，所有硬件资源 100% 供给 Web 与数据库 | 额外占用 150MB ~ 500MB+ 常驻内存 |
-| **外部通信** | **完全透明纯净**，离线模式下 0 网络请求 | 后台持续与厂商云端服务器握手、心跳并同步审计日志 |
-| **安全审计** | **100% 纯 Shell 源码**，逻辑明晰可逐行审查 | 核心编译逻辑加密混淆或打包闭源二进制 |
-| **安全基线** | **严控双安全基线**（仅支持修补后的 PHP 8.4/8.5） | 泛滥保留历史 EOL 高危版本，暴露供应链攻击面 |
+QILNMP 是基于 OneinStack 进行精简与现代版本适配的维护分支，主要做了以下减法与针对性调整：
 
-1. **纯粹专注现代 LNMP**：全面清理了 LAMP/Apache 以及沉重繁琐的 Java/Tomcat 运行时，回归 `Nginx + MySQL/MariaDB + PHP + Redis` 最精炼的高性能技术栈；
-2. **绝对免疫 php2shell 严重 RCE 漏洞**：全面清退 PHP < 8.4（5.x、7.x、8.0、8.1、8.2、8.3 等所有已 EOL 且无法完全修复核心 RCE 漏洞的旧版），代码库与安装链严格锁定修补后的 `PHP 8.4.27` 与 `PHP 8.5.12`；
-3. **100% 离线部署支持**：安装脚本在执行前会优先检测本地 `src/` 目录。只要将所需源码压缩包提前放置好，安装全过程将自动拦截并就地解压编译，**0 外部网络请求**。
+### 1. 移除的服务与环境
+- **移除 Apache (httpd) 与 LAMP 栈**：不再提供 Apache 编译与配置，Web 服务专注于高性能 Nginx（支持 Nginx、Tengine、OpenResty、Caddy）；
+- **移除 Tomcat 与 Java/JDK 运行时**：剔除 Tomcat 7/8/9/10 及 Adoptium/OpenJDK 等 Java 运行环境，大幅精简脚本体积与复杂度；
+- **清退 PHP 8.4 以下所有已停服旧版本**：全面移除了 PHP 5.3 ~ 8.3 全系版本（避免历史高危漏洞与 php2shell RCE 风险），当前仅支持并锁定修补后的 `PHP 8.4.27` 与 `PHP 8.5.12`；
+- **清理已淘汰的陈旧扩展**：删除了 ZendGuardLoader、eAccelerator、mcrypt 等古董扩展与老补丁，保留现代生产常用扩展（imagick、redis、memcached、swoole 等）。
+
+### 2. 优化与调整的功能
+- **纯离线部署就地编译**：只要将所需源码压缩包放入本地 `src/` 目录，安装脚本会自动识别并跳过网络下载，完全不产生外部网络请求；
+- **服务器硬件自适应优化**：自动检测硬件配置，在 1C2G、2C4G 等轻量服务器上自动配置 3GB Swap 防止编译 OOM，并自动优化 PHP-FPM 进程数、OPcache 与 MySQL 缓冲池大小；
+- **编译依赖与组件升级**：Nginx 升级至 1.30.6，底层编译链升级至 OpenSSL 3.5.9 LTS，数据库支持 MySQL 8.0/9.0 及 MariaDB 10.11/11.4 LTS。
 
 ---
 
@@ -444,19 +439,18 @@ ss -lntp | grep -E ':80|:443|:3306|:6379|:9000'
 - **WordPress 站长技术交流群**：`16966111`
 - **WooCommerce 跨境电商交流群**：`580246438`
 - **灵简 AI 研发交流群**：`591117073`
-- **启灵件技术支持群**：`200766709`
-- **维护者个人 QQ / 微信**：`19577566`
+- **灵简软件支持群**：`200766709`
 - **技术支持与商务联系邮箱**：`iticu@qq.com`
 
 ---
 
 ## English Summary
 
-**QILNMP** is a modernized, lightweight, and community-maintained Linux LNMP automated deployment and maintenance suite forked from OneinStack.
+**QILNMP** is a streamlined, lightweight Linux LNMP automated deployment and maintenance suite forked from OneinStack.
 
-- **Pure LNMP Focus**: Completely stripped of legacy Apache (LAMP) and Java (Tomcat/JDK) runtime overhead;
-- **Dual Security Baselines**: Strictly locked to **PHP 8.4.27** and **PHP 8.5.12**, entirely immune to the severe php2shell RCE vulnerability;
-- **Zero Background Daemons**: 0 MB residual memory footprint compared to resource-heavy GUI control panels;
+- **Streamlined Stack**: Removed Apache (LAMP) and Java (Tomcat/JDK) runtime components, focusing purely on high-performance Nginx;
+- **Dual Security Baselines**: Strictly locked to **PHP 8.4.27** and **PHP 8.5.12**, eliminating all legacy EOL PHP versions and known core vulnerabilities;
+- **Lightweight & Clean**: Shell-native automation with zero background daemon processes;
 - **Hardware-Aware Auto-Tuning**: Dynamically adapts Swap, PHP-FPM worker pools, OPcache, and MySQL InnoDB buffer pool size according to system resources (e.g. 2C4G, 4C8G, 8C16G);
 - **Production Database Advisory**: Clear selection metrics between MariaDB LTS (optimized for ≤4GB RAM & CMS) and MySQL 8.0 (native binary JSON & cloud RDS alignment);
 - **100% Offline & Private Mirror Ready**: Bypasses all outbound network requests if packages are pre-placed in `src/`, fully compatible with [MirrorOne](https://github.com/dalao-org/MirrorOne);
