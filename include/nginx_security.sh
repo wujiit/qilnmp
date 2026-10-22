@@ -543,7 +543,9 @@ QILNMP_security_status() {
   if Fail2ban_server_installed; then
     echo "Fail2ban installed: yes"
     if command -v systemctl >/dev/null 2>&1; then
-      echo "Fail2ban service: $(systemctl is-active fail2ban 2>/dev/null || echo unknown)"
+      local _svc_status
+      _svc_status=$(systemctl is-active fail2ban 2>/dev/null)
+      echo "Fail2ban service: ${_svc_status:-unknown}"
     fi
   else
     echo "Fail2ban installed: no"

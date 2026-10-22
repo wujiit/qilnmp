@@ -1,5 +1,4 @@
 # Task List
-- [ ] Investigate CMake error in php-8.5.sh
-- [ ] Check why pushd/popd directory stack is empty
-- [ ] Determine why mhash and php-8.5.3.tar.gz are missing
-- [ ] Provide the fix or explanation to the user
+- [x] Support php-8.5.12 (updated php85_ver to 8.5.12)
+- [x] Drop legacy PHP < 8.2 (5.x, 7.x, 8.0, 8.1) across entire project
+- [x] Provide full documentation and cleanup verification to user

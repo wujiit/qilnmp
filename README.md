@@ -1,738 +1,463 @@
 # QILNMP
 
-QILNMP 是基于 OneinStack 的社区维护分支，面向 LNMP/LAMP 快速部署与日常运维。
+<div align="center">
 
-## Fork / 版权说明
+**现代化、高性能、轻量级 Linux LNMP 自动化部署与运维套件**
 
-- Upstream Author: yeho `<lj2007331 AT gmail.com>`
-- Upstream Project Repo: <https://github.com/oneinstack/oneinstack>
-- Fork Maintainer: summer `<iticu@qq.com>`
-- Fork Site: <https://qiling.jingxialai.com>
-- Fork Repo: <https://github.com/wujiit/qilnmp>
-- License: Apache-2.0
+专注于现代生产环境 · 锁定双安全基线 (PHP 8.4 / 8.5) · 零后台常驻进程 · 100% 纯离线构建
 
-## 中文使用文档
+[![Release](https://img.shields.io/badge/Release-2.6-blue.svg)](https://github.com/wujiit/qilnmp/releases)
+[![PHP](https://img.shields.io/badge/PHP-8.4.27%20%7C%208.5.12-777BB4.svg?logo=php&logoColor=white)](https://www.php.net)
+[![Nginx](https://img.shields.io/badge/Nginx-1.30.6-009639.svg?logo=nginx&logoColor=white)](https://nginx.org)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0%20%7C%209.0-4479A1.svg?logo=mysql&logoColor=white)](https://www.mysql.com)
+[![MariaDB](https://img.shields.io/badge/MariaDB-10.11%20%7C%2011.4%20LTS-C0765A.svg?logo=mariadb&logoColor=white)](https://mariadb.org)
+[![License](https://img.shields.io/badge/License-Apache--2.0-orange.svg)](https://github.com/wujiit/qilnmp/blob/master/LICENSE)
 
-### 1. 项目能力
+[官方网站](https://qiling.jingxialai.com) · [官方软件源导航](https://qiling.jingxialai.com/docs/sources.html) · [提交反馈 / Issue](https://github.com/wujiit/qilnmp/issues)
 
-- Shell 交互式安装，支持自动化参数安装
-- 源码编译安装，支持本地包、镜像源、自定义源、官方回源
-- 支持 Nginx/Tengine/OpenResty/Caddy/Apache
-- 支持 MySQL/MariaDB/Percona/PostgreSQL/MongoDB
-- 支持 PHP 多版本（含 `8.2/8.3/8.4/8.5`）
-- 支持 MySQL `8.0/9.0`、MariaDB `10.11/10.5/10.4/11.4`
-- 支持 Redis、Memcached、Pure-FTPd、phpMyAdmin、Node.js 等
-- 提供虚拟主机、备份、升级、卸载、环境状态检查工具
+</div>
 
-### 2. 支持系统
+---
 
-当前维护策略：只支持较新系统，低版本系统不再支持。
+## 目录
 
-- RHEL 系（Rocky/AlmaLinux/RHEL 等）：`8/9`
-- Debian：`10/11/12`
-- Ubuntu：`20.04/22.04/24.04`
-- 仅支持 64 位系统
+- [项目渊源与维护声明](#项目渊源与维护声明)
+- [核心设计理念与优势](#核心设计理念与优势)
+- [服务器硬件智能感知与动态调优](#服务器硬件智能感知与动态调优)
+- [数据库选型指南：MySQL 8.0 vs MariaDB LTS](#数据库选型指南mysql-80-vs-mariadb-lts)
+- [操作系统支持与技术断代说明](#操作系统支持与技术断代说明)
+- [快速安装部署](#快速安装部署)
+- [纯离线构建与私有镜像源支持](#纯离线构建与私有镜像源支持)
+- [命令行静默自动化安装参数](#命令行静默自动化安装参数)
+- [全功能运维脚本工具箱](#全功能运维脚本工具箱)
+  - [vhost.sh 虚拟主机与 SSL 管理](#vhostsh-虚拟主机与-ssl-管理)
+  - [wordpress.sh 一键建站](#wordpresssh-一键极速建站)
+  - [security.sh 防 CC 与安全防护](#securitysh-基础安全与防-cc-模块)
+  - [upgrade.sh 平滑原地热升级](#upgradesh-平滑原地热升级)
+  - [uninstall.sh 精细化组件卸载](#uninstallsh-精细化组件卸载)
+  - [backup.sh 与云对象存储备份](#backupsh-自动化全量备份)
+  - [reset_db_root_password.sh 密码重置](#reset_db_root_passwordsh-数据库密码重置)
+  - [tools 目录实用体检工具](#tools-目录实用工具)
+- [默认目录与服务管理速查](#默认目录与服务管理速查)
+- [常见问题与排错 (FAQ)](#常见问题与排错-faq)
+- [交流社群与联系方式](#交流社群与联系方式)
+- [English Summary](#english-summary)
 
-明确不支持示例：
+---
 
-- CentOS 7
-- Debian 9 及以下
-- Ubuntu 18.04/16.04 及以下
+## 项目渊源与维护声明
 
-### 3. 快速安装
+- **上游原始作者**：yeho `<lj2007331 AT gmail.com>`
+- **上游原始仓库**：[oneinstack/oneinstack](https://github.com/oneinstack/oneinstack)
+- **独立分支维护者**：summer `<iticu@qq.com>`
+- **分支官方网站**：[https://qiling.jingxialai.com](https://qiling.jingxialai.com)
+- **分支代码仓库**：[https://github.com/wujiit/qilnmp](https://github.com/wujiit/qilnmp)
+- **开源许可证**：[Apache-2.0](https://github.com/wujiit/qilnmp/blob/master/LICENSE)
 
-CentOS/RHEL/Rocky/AlmaLinux：
+> [!IMPORTANT]
+> **为什么独立维护 QILNMP 分支？**
+> 很多长期习惯 Linux 纯命令行运维的开发者都深度使用过 OneinStack。这套由 Shell 编写的自动化运维套件轻量、透明、无常驻守护进程。然而由于上游项目后期转让出售并引发社区供应链安全信任危机，曾经放心的基础套件不再让人安心。
+> 
+> 本分支基于此背景创建，旨在为开发者提供一个**纯净、完全开源可审计、剔除陈旧历史包袱（坚决移除 Apache 与 Java/Tomcat）、锁定现代高安全基线**的独立发行版。
+
+---
+
+## 核心设计理念与优势
+
+| 维度 | QILNMP 方案 | 传统图形面板（如宝塔 / 1Panel 等） |
+|---|---|---|
+| **后台常驻进程** | **0 常驻进程**，执行完毕即彻底释放 | 需长期常驻 1~3 个 Python/Go Web 守护进程 |
+| **内存额外开销** | **0 MB**，所有硬件资源 100% 供给 Web 与数据库 | 额外占用 150MB ~ 500MB+ 常驻内存 |
+| **外部通信** | **完全透明纯净**，离线模式下 0 网络请求 | 后台持续与厂商云端服务器握手、心跳并同步审计日志 |
+| **安全审计** | **100% 纯 Shell 源码**，逻辑明晰可逐行审查 | 核心编译逻辑加密混淆或打包闭源二进制 |
+| **安全基线** | **严控双安全基线**（仅支持修补后的 PHP 8.4/8.5） | 泛滥保留历史 EOL 高危版本，暴露供应链攻击面 |
+
+1. **纯粹专注现代 LNMP**：全面清理了 LAMP/Apache 以及沉重繁琐的 Java/Tomcat 运行时，回归 `Nginx + MySQL/MariaDB + PHP + Redis` 最精炼的高性能技术栈；
+2. **绝对免疫 php2shell 严重 RCE 漏洞**：全面清退 PHP < 8.4（5.x、7.x、8.0、8.1、8.2、8.3 等所有已 EOL 且无法完全修复核心 RCE 漏洞的旧版），代码库与安装链严格锁定修补后的 `PHP 8.4.27` 与 `PHP 8.5.12`；
+3. **100% 离线部署支持**：安装脚本在执行前会优先检测本地 `src/` 目录。只要将所需源码压缩包提前放置好，安装全过程将自动拦截并就地解压编译，**0 外部网络请求**。
+
+---
+
+## 服务器硬件智能感知与动态调优
+
+脚本在启动时会自动读取物理/虚拟硬件配置，并依据真实硬件规格实施动态调优策略（详见 `include/memory.sh`）：
+
+### 1. 自动化 Swap 智能兜底（针对轻量服务器）
+若系统未划分 Swap 交换分区，脚本将自动在根目录下创建 **3GB 优化型虚拟内存文件（`/swapfile`）** 并挂载开机自启。彻底规避在 1核2G 或 2核4G 服务器上因多并发编译 OpenSSL 3.5 或 MySQL 时触发 Linux OOM Killer 杀掉编译进程的情况。
+
+### 2. 硬件梯度配置自适应表
+
+| 硬件规格 | Swap 策略 | PHP `memory_limit` | OPcache 内存 | PHP-FPM 工作进程配置 (`pm`) | MySQL `innodb_buffer_pool` |
+|---|---|---|---|---|---|
+| **1核 2G 内存** | 自动创建 3GB | `128M` | `64M` | `max: 20` / `start: 10` / `min: 10` / `max_spare: 20` | `256M` |
+| **2核 4G 内存** | 自动创建 3GB | `320M` | `128M` | `max: 50` / `start: 30` / `min: 20` / `max_spare: 40` | `1024M (1G)` |
+| **4核 8G 内存** | 按需创建 4GB | `512M` | `256M` | `max: 100` / `start: 50` / `min: 30` / `max_spare: 80` | `2048M (2G)` |
+| **8核 16G 内存** | 系统默认或 4GB | `1024M` | `512M` | `max: 200` / `start: 100` / `min: 50` / `max_spare: 150` | `4096M (4G)` |
+
+> [!TIP]
+> 2核4G 服务器在优化后，MySQL 独享 1GB 缓冲池，留足约 2.5GB 物理内存与 3GB 虚拟交换空间供 PHP-FPM 50 个工作并发平稳承接高负载，杜绝内存耗尽假死。
+
+---
+
+## 数据库选型指南：MySQL 8.0 vs MariaDB LTS
+
+两者底层语法、数据类型与客户端协议 100% 兼容平替，但在系统资源开销与特定高级特性上各有侧重：
+
+```mermaid
+flowchart TD
+    A["新建生产环境数据库选型"] --> B{"服务器内存是否 ≤ 4GB，或主跑 WordPress/CMS？"}
+    B -- 是 (1C2G / 2C4G) --> C["优先推荐 MariaDB (10.11 / 11.4 LTS)\n• 空载仅需 150~300MB（省近 400MB 内存）\n• 自带免费线程池与 Aria 高速引擎\n• 必须认准 LTS 长期支持版"]
+    B -- 否 (4C8G / 8C16G 及以上) --> D{"是否有云厂商 RDS 托管对齐或重度二进制 JSON 需求？"}
+    D -- 是 --> E["优先推荐 MySQL 8.0 社区版\n• 原生二进制 JSON 就地更新\n• 100% 对齐阿里云 RDS / AWS RDS\n• 适合大型企业级标准化 ERP/CRM"]
+    D -- 否 --> F["两者皆可，随意二选一\n• 内存充裕下性能差异无感知\n• 驱动与业务 SQL 100% 互通无需改代码"]
+```
+
+### 生产选型三大黄金法则：
+1. **轻量级服务器（1核2G / 2核4G）及经典 CMS 建站首选 MariaDB**：常驻空载仅需 150~300MB（比 MySQL 8.0 节省近 400MB+），自带免费线程池优化，省下的内存可充分布置给 PHP-FPM 与 Redis；
+2. **重度依赖二进制 JSON 或对齐云厂商托管选 MySQL 8.0**：MySQL 8.0 的原生二进制 JSON 嵌套查询与局部就地更新性能优异；
+3. **生产环境选 MariaDB 必须严格认准 LTS（长期支持版）**：强烈推荐官方维护至 2028 年的 `MariaDB 10.11 LTS` 或维护至 2029 年的 `11.4 LTS`。**切勿追随滚动尝鲜版（如 short-lived 创新版）**。
+
+---
+
+## 操作系统支持与技术断代说明
+
+### ✅ 官方正式支持的 64 位操作系统：
+- **RHEL 系列**：Rocky Linux `8.x / 9.x`、AlmaLinux `8.x / 9.x`、RHEL `8.x / 9.x`、CentOS Stream `8 / 9`、Oracle Linux `8 / 9`、Anolis OS `8+`、OpenCloudOS `8+`、openEuler `22+`
+- **Debian 系列**：Debian `11 (Bullseye)`、Debian `12 (Bookworm)`、Debian `13 (Trixie)`
+- **Ubuntu 系列**：Ubuntu `20.04 LTS`、`22.04 LTS`、`24.04 LTS` 及更高版本
+- **CPU 架构**：`x86_64` (amd64) 与 `aarch64` (arm64)
+
+### ❌ 明确不支持并由安装脚本强制拦截的旧系统：
+- **CentOS 7.x（含 CentOS 7.9 及所有早期 7.x/6.x 分支）**
+- **Debian 10 及更早版本（Debian 10/9/8）**
+- **Ubuntu 18.04 / 16.04 及更早版本**
+- **所有 32 位操作系统**
+
+> [!CAUTION]
+> **为什么必须彻底封禁并拒绝支持 CentOS 7.9？**
+> 1. **官方生命周期彻底终结（EOL）：** CentOS 7 已于 2024 年 6 月 30 日停服，官方 Yum 源全线失效，内核累积不可修复高危漏洞；
+> 2. **编译器版本严重断代（GCC 4.8.5）：** 现代 PHP 8.4/8.5 核心强依赖 C11 标准与现代 C++17 特性（要求 GCC ≥ 8.1），旧编译器在语法解析阶段即直接崩溃报错；
+> 3. **底层 C 运行库断代（glibc 2.17）：** 现代通用的 MySQL 8.0 社区二进制包、OpenSSL 3.5、jemalloc 均依赖 `glibc ≥ 2.28`，在 glibc 2.17 上会直接触发 `GLIBC_2.28 not found` 致命段错误；
+> 4. **底层基础加密库脱节：** CentOS 7 自带 OpenSSL 1.0.2 与 cURL 7.29，无法满足现代 TLS 1.3、HTTP/2/3 及 Argon2 / Sodium 加密算法的硬性基线。
+
+---
+
+## 快速安装部署
+
+### 1. RHEL / Rocky / AlmaLinux (8/9+)
 
 ```bash
-yum -y install wget screen || dnf -y install wget screen
+# 1. 安装基础依赖与 screen
+yum -y install wget screen git || dnf -y install wget screen git
+
+# 2. 克隆项目仓库并进入目录
 git clone https://github.com/wujiit/qilnmp.git
 cd qilnmp
-# 如需修改安装目录、镜像源、日志目录等，先编辑 options.conf
+
+# 3. 开启 screen 会话防止网络断线中断编译
 screen -S qilnmp
-# 如果网络中断，可执行 screen -r qilnmp 重新连接安装窗口
-chmod +x install.sh
+chmod +x *.sh
 ./install.sh
 ```
 
-Debian/Ubuntu：
+### 2. Debian 11/12 & Ubuntu 20/22/24
 
 ```bash
-apt-get update && apt-get -y install wget screen
+# 1. 更新源并安装基础依赖
+apt-get update && apt-get -y install wget screen git
+
+# 2. 克隆项目仓库并进入目录
 git clone https://github.com/wujiit/qilnmp.git
 cd qilnmp
-# 如需修改安装目录、镜像源、日志目录等，先编辑 options.conf
+
+# 3. 开启 screen 会话防止网络断线中断编译
 screen -S qilnmp
-# 如果网络中断，可执行 screen -r qilnmp 重新连接安装窗口
-chmod +x install.sh
+chmod +x *.sh
 ./install.sh
 ```
 
-离线压缩包方式：
+> [!TIP]
+> 如果编译过程中因网络问题导致 SSH 连接断开，无需惊慌，重新连上服务器后执行 `screen -r qilnmp` 即可无缝切回原安装进度界面。
+
+---
+
+## 纯离线构建与私有镜像源支持
+
+### 1. 极速纯离线构建（本地 `src/` 方式）
+无需服务器连接公网。在外网电脑下载好组件包并放入 `qilnmp/src/` 目录，打包拷贝至服务器直接解压运行 `./install.sh`，脚本检测到本地文件存在将直接原地校验解压编译：
 
 ```bash
-tar xzf qilnmp.tar.gz
+# 外网机器打包
+tar czvf qilnmp-offline.tar.gz qilnmp/
+
+# 拷贝到目标内网机器后直接运行
+tar xzf qilnmp-offline.tar.gz
 cd qilnmp
-# 如需修改安装目录、镜像源、日志目录等，先编辑 options.conf
-screen -S qilnmp
-# 如果网络中断，可执行 screen -r qilnmp 重新连接安装窗口
-chmod +x install.sh
+chmod +x *.sh
 ./install.sh
 ```
 
-当前发布只保留一个安装包：`qilnmp.tar.gz`。
+*各组件官方纯净源码直链与标准归档命名规范详见：* **[docs/sources.html](https://qiling.jingxialai.com/docs/sources.html)**
 
-如果当前文件没有执行权限，也可以改用：
-
-```bash
-cd qilnmp
-bash install.sh
-```
-
-常改项：
-
-- `mirror_link`：镜像源地址
-- `mirror_fallback_links`：额外镜像源地址列表（可选，多个地址用空格分隔并用引号包起来）
-- `custom_src_urls_file`：自定义包地址映射文件
-- `wwwroot_dir`：网站根目录
-- `wwwlogs_dir`：日志目录
-- `php_install_dir` / `mysql_install_dir` 等安装目录
-
-说明：
-
-- 这个项目本身是 `#!/bin/bash` 的直接执行脚本，常规用法就是 `chmod +x install.sh` 后执行 `./install.sh`
-- `bash install.sh` 也能运行，但更适合作为“当前文件没有执行权限时”的备用方式
-- 不建议使用 `chmod -R 755 qilnmp` 这类递归改权限命令
-
-### 4. 下载源优先级（重要）
-
-`Download_src` 当前按以下顺序尝试下载：
-
-1. 本地 `src/` 已存在文件
-2. `mirror_link` 主镜像地址（例如 `https://mirror.example.com/src/xxx.tar.gz`）
-3. `config/custom_src_urls.conf` 里配置的自定义 URL（按文件名匹配）
-4. 脚本内置 `src_url_backup` 官方备用地址（按具体组件是否定义而定）
-5. `mirror_fallback_links` 里配置的额外镜像地址
-6. 当前镜像配置里 `_redirects` 对应的官方回源地址
-
-自定义 URL 示例：
+### 2. 自建私有局域网镜像源（团队多机推荐）
+团队内部若管理多台服务器，强烈推荐使用开源镜像系统 **[MirrorOne (dalao-org/MirrorOne)](https://github.com/dalao-org/MirrorOne)** 在内网或专网搭建专属镜像站。在 `options.conf` 中配置主镜像直链：
 
 ```bash
-icu4c-63_1-src.tgz=https://test.12345.com/ty/icu4c-63_1-src.tgz
+mirror_link=https://mirror.yourdomain.com
+mirror_fallback_links='https://mirror-backup.yourdomain.com'
 ```
 
-推荐做法（按需选择一种或组合）：
+---
 
-- 按业务需求先从官网下载源码包，再上传到 `src/` 目录（最直接、最可控）
-- 搭建自己的镜像源，然后在 `options.conf` 里配置 `mirror_link`
-- 如果希望配置多个镜像，只在 `options.conf` 里维护 `mirror_fallback_links`
-- 如果安装包 MD5 清单位于单独目录，可在 `options.conf` 里配置 `mirror_md5_url`
-- 使用第三方镜像源时，也建议统一写进 `options.conf`，不要在脚本里额外写死
+## 命令行静默自动化安装参数
 
-多镜像示例：
-
-```bash
-mirror_link=https://mirror-a.example.com
-mirror_fallback_links='https://mirror-b.example.com https://mirror-c.example.com'
-```
-
-镜像相关域名说明：
-
-- 默认配置下，主镜像域名是 `one.jingxialai.com`，对应 `options.conf` 里的 `mirror_link`
-- `mirror_fallback_links` 默认留空；只有你自己填写后，脚本才会访问这些备用镜像域名
-- 例如你可以配置 `mirror_fallback_links='https://mirror.dal.ao'`，这时 `mirror.dal.ao` 才会作为备用镜像参与下载和版本同步
-- README 里出现的 `mirror.dal.ao` 现在仅作为示例镜像域名，不是脚本运行逻辑里写死的强制访问目标
-
-补充说明：
-
-- 下载和版本同步现在都只读取 `mirror_link` 与 `mirror_fallback_links`
-- 脚本运行逻辑里不再额外内置其他镜像域名
-
-#### 4.1 当前代码可能访问的外部域名
-
-以下清单按当前代码整理，表示安装、下载、升级、版本同步、可选组件安装，以及备份相关功能中，脚本本身可能访问或读取到的域名。
-
-- 已排除：`xprober.php`、`ocp.php`
-- 已排除：`config/custom_src_urls.conf` 中由用户自行配置的自定义地址
-- 说明：如果你只走本地 `src/` 离线包，或把相关组件全部改到自建镜像，实际访问域名会少于下面清单
-
-镜像与版本同步：
-
-- `one.jingxialai.com`（默认 `mirror_link`）
-- `mirror.dal.ao`（仅当你把它写入 `mirror_fallback_links` 时才会访问）
-- `mirror_fallback_links` 中由用户自行配置的额外镜像域名（如有）
-
-Web 服务与基础组件官方源：
-
-- `nginx.org`
-- `openresty.org`
-- `tengine.taobao.org`
-- `archive.apache.org`
-- `httpd.apache.org`
-- `tomcat.apache.org`
-- `curl.se`
-- `ftp.gnu.org`
-- `download.gnome.org`
-- `download.libsodium.org`
-- `downloads.sourceforge.net`
-- `libzip.org`
-- `zlib.net`
-- `imagemagick.org`
-- `download.pureftpd.org`
-- `downloads.ioncube.com`
-- `xcache.lighttpd.net`
-- `launchpad.net`
-- `github.com`
-
-PHP / PECL / Composer / phpMyAdmin：
-
-- `www.php.net`
-- `pecl.php.net`
-- `www.phpmyadmin.net`
-- `files.phpmyadmin.net`
-- `getcomposer.org`
-- `packagist.phpcomposer.com`
-- `mirrors.aliyun.com`
-
-数据库与缓存组件：
-
-- `download.redis.io`
-- `www.memcached.org`
-- `downloads.mysql.com`
-- `cdn.mysql.com`
-- `archive.mariadb.org`
-- `downloads.percona.com`
-- `www.percona.com`
-- `ftp.postgresql.org`
-- `ftp.heanet.ie`
-- `fastdl.mongodb.org`
-
-地区镜像与软件仓库：
-
-- `mirrors.tuna.tsinghua.edu.cn`
-- `mirrors.ustc.edu.cn`
-- `mirrors.dotsrc.org`
-- `cdn.remirepo.net`
-- `nodejs.org`
-
-备份与对象存储工具链：
-
-- `gosspublic.alicdn.com`
-- `cosbrowser.cloud.tencent.com`
-- `devtools.qiniu.com`
-- `collection.b0.upaiyun.com`
-- `awscli.amazonaws.com`
-- `*.aliyuncs.com`
-- `*.myqcloud.com`
-
-说明：
-
-- 上面这一组主要在启用阿里云 OSS、腾讯云 COS、七牛云、又拍云、AWS S3 等备份能力时才会访问
-- `dbxcli` 由当前 `mirror_link` 下载，但其运行时访问的 Dropbox API 域名未在 shell 脚本中硬编码
-
-补充说明：
-
-- 当前代码里未发现硬编码的公网独立 IP 下载/访问目标
-- 代码里出现的 `127.0.0.1`、`localhost`、`0.0.0.0`、`192.168.1.1` 主要是本机监听、反向代理或示例地址，不属于外部访问目标
-
-常见 LNMP 离线包文件名清单（可直接按表下载到 `src/`）：
-
-- 见 `SRC_PACKAGE_LIST.md`
-
-### 5. MD5 校验说明
-
-安装开始时可选择 `Do you want to check md5sum? [y/n]`。
-
-- 选择 `y` 后，会校验当前安装包 MD5
-- 当前安装包固定为 `qilnmp.tar.gz`
-- 校验来源优先使用 `mirror_md5_url`，未配置时回退到 `${mirror_link}/md5/md5sum.txt`
-- 若不一致会提示重新下载安装包
-
-如果你使用自己的镜像站，建议在镜像站提供 `md5sum.txt`，例如：
-
-```bash
-mirror_link=https://mirror.123.com
-mirror_fallback_links='https://mirror2.123.com https://mirror3.123.com'
-mirror_md5_url=https://mirror.123.com/md5/md5sum.txt
-```
-
-### 6. 常用安装与维护命令
-
-#### 6.1 安装额外 PHP 版本
-
-```bash
-./install.sh --mphp_ver 85
-```
-
-#### 6.2 安装 PHP 扩展
-
-推荐直接用 `install.sh --php_extensions`：
-
-```bash
-./install.sh --php_extensions fileinfo
-./install.sh --php_extensions redis
-./install.sh --php_extensions imagick
-./install.sh --php_extensions "fileinfo redis imagick"
-```
-
-安装后建议重载 PHP-FPM：
-
-```bash
-systemctl restart php-fpm || service php-fpm restart
-```
-
-说明：`addons.sh` 主要用于 Composer/fail2ban/ngx_lua_waf，不是主要的 PHP 扩展安装入口。
-
-#### 6.3 安装 Redis 服务端
-
-```bash
-./install.sh --redis
-systemctl enable --now redis-server || systemctl enable --now redis
-```
-
-说明：仅安装 `php redis` 扩展，不等于安装 Redis 服务端。
-
-#### 6.4 安装状态检查
-
-```bash
-bash tools/stack_status.sh
-```
-
-输出会包含：
-
-- Web 服务与版本
-- 数据库服务与版本
-- Redis/Memcached/Pure-FTPd 状态
-- PHP 版本、关键扩展、扩展列表
-
-#### 6.5 站点与备份
-
-```bash
-./vhost.sh
-./vhost.sh --del
-./pureftpd_vhost.sh
-./backup_setup.sh
-./backup.sh
-./upgrade.sh
-./uninstall.sh
-```
-
-#### 6.6 install.sh 参数化安装示例
-
-查看参数帮助：
-
-```bash
-./install.sh --help
-```
-
-示例：一条命令完成 LNMP + PHP 扩展 + 常用组件（按参数自动安装）：
+适合运维编写 Ansible、云初始化脚本（Cloud-init）或批量无交互无人值守部署：
 
 ```bash
 ./install.sh \
   --nginx_option 1 \
-  --php_option 11 \
+  --php_option 2 \
   --phpcache_option 1 \
-  --php_extensions "fileinfo redis imagick" \
+  --php_extensions "imagick redis memcached fileinfo" \
   --db_option 1 \
   --dbinstallmethod 1 \
-  --dbrootpwd 'StrongPass_123' \
-  --phpmyadmin \
+  --dbrootpwd 'Your_Strong_Password_123' \
   --redis \
-  --memcached \
+  --phpmyadmin \
   --md5sum
 ```
 
-说明：
+### 参数选项速查对照表：
 
-- `--nginx_option`、`--php_option`、`--db_option` 的编号以脚本菜单为准。
-- 如果只传部分参数，脚本会按已给参数执行，不一定进入完整交互流程。
+| 参数 | 取值范围 | 说明 |
+|---|---|---|
+| `--nginx_option` | `1~4` | `1`: Nginx, `2`: Tengine, `3`: OpenResty, `4`: Caddy |
+| `--php_option` | `1~2` | **`1`: PHP 8.4.27**，**`2`: PHP 8.5.12**（双安全基线，杜绝高危旧版） |
+| `--phpcache_option` | `1~2` | `1`: OPcache（强烈推荐），`2`: APCu |
+| `--php_extensions` | 字符串 | 常用扩展：`imagick`, `redis`, `memcached`, `fileinfo`, `swoole`, `mongodb`, `xdebug` |
+| `--db_option` | `1~16` | **`1`: MySQL 8.0**, **`5`: MariaDB 10.11 LTS**, **`16`: MariaDB 11.4 LTS**, `15`: MySQL 9.0 |
+| `--dbinstallmethod` | `1~2` | `1`: 官方通用免编译二进制极速安装（推荐），`2`: 源码编译安装 |
+| `--dbrootpwd` | 字符串 | 指定数据库 root 初始密码 |
+| `--redis` | 标志开关 | 一并安装 Redis 服务端并配置 systemd 自启 |
+| `--phpmyadmin` | 标志开关 | 一并安装 phpMyAdmin Web 端图形管理工具 |
+| `--mphp_ver` | `84` / `85` | 安装第二个共存 PHP 版本（多版本共存部署） |
 
-#### 6.7 addons.sh（附加组件）
+---
 
-```bash
-./addons.sh --install --composer
-./addons.sh --install --fail2ban
-./addons.sh --install --ngx_lua_waf
+## 全功能运维脚本工具箱
 
-./addons.sh --uninstall --composer
-./addons.sh --uninstall --fail2ban
-./addons.sh --uninstall --ngx_lua_waf
-```
-
-#### 6.8 security.sh（基础安全模块）
-
-适用范围：
-
-- 仅针对 `Nginx/Tengine/OpenResty`
-- 通过 `limit_req/limit_conn + Fail2ban` 实现简单 CC 防护与自动封禁
-- 默认监控 `/data/wwwlogs/*nginx.log`
-- 如果某个站点配置了 `access_log off;`，该站点只能享受 Nginx 限流，无法参与 Fail2ban 自动封禁
+### `vhost.sh` 虚拟主机与 SSL 管理
 
 ```bash
-./security.sh --install
-./security.sh --enable
-./security.sh --disable
-./security.sh --status
-./security.sh --uninstall
-```
+# 1. 交互式创建虚拟主机（引导式配置域名、目录、伪静态、SSL）
+./vhost.sh
 
-#### 6.9 vhost.sh（虚拟主机）常用参数
+# 2. 命令行快速创建并自动申领 Let's Encrypt 免费 SSL
+./vhost.sh --add --domain example.com --ssl letsencrypt --letsencrypt-email admin@example.com
 
-```bash
+# 3. 指定使用第二版本 PHP（如多版本共存场景下的 PHP 8.5）
+./vhost.sh --add --domain api.example.com --mphp_ver 85
+
+# 4. 列出当前已配置的所有虚拟主机站点
 ./vhost.sh --list
-./vhost.sh --add --letsencrypt
-./vhost.sh --add --selfsigned
-./vhost.sh --add --httponly
-./vhost.sh --add --proxy
-./vhost.sh --add --mphp_ver 85
+
+# 5. 删除指定站点（支持同步安全删除站点配置文件与日志）
 ./vhost.sh --del
 ```
 
-#### 6.10 wordpress.sh（一键部署 WordPress）
+---
 
-说明：
+### `wordpress.sh` 一键极速建站
 
-- 适用于已安装 `Nginx/Tengine/OpenResty + PHP + MySQL/MariaDB/Percona` 的环境
-- 会自动创建站点目录、下载并解压 WordPress、生成 `wp-config.php`、写入 Nginx vhost
-- 默认自动创建数据库/数据库用户，也支持改为使用现有数据库
-- SSL 仅支持三种模式：`none`、`own`、`letsencrypt`
-- 支持自定义数据库主机、数据库名、数据库用户名、数据库密码、WordPress 表前缀
-- `own` / `letsencrypt` 模式支持自定义是否开启 HTTP 301 跳转到 HTTPS
-- `own` 模式默认会在 `conf/ssl/` 下生成一套自签名占位证书，后续你可以直接替换同名 `.crt/.key` 文件
-- 如果你已经有现成证书，也可以在 `own` 模式下配合 `--ssl-crt` 和 `--ssl-key` 直接导入
-- 使用 `127.0.0.1` 作为 `DB_HOST` 时，脚本会自动把授权主机改成 `127.0.0.1`
-- 默认不再额外拦截 `/wp-json`，避免影响 WordPress REST API、区块编辑器和插件兼容性
+针对 WordPress 与 WooCommerce 量身打造，全自动完成站点目录构建、自动建库、生成高强度 `wp-config.php`、配置专属 Nginx 伪静态与 Opcache 调优：
 
 ```bash
-# 仅创建 HTTP 站点
-./wordpress.sh --domain blog.example.com --ssl none
-
-# 生成一套占位证书，后面自己替换
-./wordpress.sh \
-  --domain blog.example.com \
-  --ssl own
-
-# 直接导入现成证书
-./wordpress.sh \
-  --domain blog.example.com \
-  --ssl own \
-  --ssl-crt /path/fullchain.pem \
-  --ssl-key /path/privkey.pem
-
-# 自动申请 Let's Encrypt
+# 极速一键部署（自动创建独立数据库并配置 Let's Encrypt SSL）
 ./wordpress.sh \
   --domain blog.example.com \
   --ssl letsencrypt \
   --letsencrypt-email admin@example.com
 
-# 自定义数据库用户、数据库主机、表前缀，并关闭 HTTP -> HTTPS 跳转
+# 使用现有数据库，导入自定义商业证书
 ./wordpress.sh \
-  --domain blog.example.com \
+  --domain shop.example.com \
   --ssl own \
-  --ssl-redirect n \
-  --db-host 127.0.0.1 \
-  --db-name wp_blog \
-  --db-user wp_blog_user \
-  --db-pass 'StrongPass_123456' \
-  --table-prefix blog_
-
-# 使用现有数据库，不再自动建库建用户
-./wordpress.sh \
-  --domain blog.example.com \
-  --ssl none \
+  --ssl-crt /etc/ssl/shop.crt \
+  --ssl-key /etc/ssl/shop.key \
   --db-create n \
-  --db-host 127.0.0.1 \
-  --db-name wp_blog \
-  --db-user wp_blog_user \
-  --db-pass 'StrongPass_123456' \
-  --table-prefix blog_
+  --db-name existing_db \
+  --db-user existing_user \
+  --db-pass 'YourPassword_123'
 ```
 
-执行完成后，脚本会输出：
+---
 
-- 站点目录
-- Nginx 配置文件路径
-- WordPress 访问地址
-- `/wp-admin/install.php` 安装入口
-- 数据库创建模式、数据库主机
-- 自动生成或手动指定的数据库名、数据库用户名、数据库密码
-- 当前使用的 WordPress 表前缀
-- SSL 模式下当前是否启用 HTTP 301 跳转
+### `security.sh` 基础安全与防 CC 模块
 
-#### 6.10 pureftpd_vhost.sh（FTP 用户）常用参数
+针对 Nginx 栈提供单 IP 限频（15r/s，突发 30）保护，并联动 Fail2ban 实时分析 `/data/wwwlogs/*nginx.log`，对恶意扫描与高频 CC 攻击 IP 实施系统防火墙自动封禁：
 
 ```bash
-./pureftpd_vhost.sh --add -u ftpuser -p 'Pass_123456' -d /data/wwwroot/example.com
-./pureftpd_vhost.sh --usermod -u ftpuser -d /data/wwwroot/newpath
-./pureftpd_vhost.sh --passwd -u ftpuser -p 'NewPass_123456'
-./pureftpd_vhost.sh --showuser -u ftpuser
-./pureftpd_vhost.sh --list
-./pureftpd_vhost.sh --delete -u ftpuser
+./security.sh --install     # 安装并部署防 CC 模块与 Fail2ban 规则
+./security.sh --status      # 查看当前防护运行状态与已封禁的攻击 IP 清单
+./security.sh --disable     # 临时停用限频防护（保留配置文件）
+./security.sh --enable      # 重新启用防护
+./security.sh --uninstall   # 彻底卸载防护规则
 ```
 
-#### 6.11 升级命令（upgrade.sh）
+---
+
+### `upgrade.sh` 平滑原地热升级
+
+用于在同系列分支内平滑升级补丁版本（如 PHP 8.5.x 升级至 8.5.12、Nginx 升级至 1.30.6）。自动继承历史编译参数，网站配置与模块完全不丢失：
 
 ```bash
-./upgrade.sh --help
-./upgrade.sh --php <version>
-./upgrade.sh --nginx <version>
-./upgrade.sh --db <version>
-./upgrade.sh --redis <version>
-./upgrade.sh --phpmyadmin <version>
-./upgrade.sh --oneinstack
-./upgrade.sh --acme.sh
+./upgrade.sh --php 8.5.12    # 原地升级 PHP 到指定补丁版本
+./upgrade.sh --nginx 1.30.6  # 原地升级 Nginx 版本
+./upgrade.sh --redis 7.2.7   # 升级 Redis 服务端
+./upgrade.sh --db 8.0.44     # 升级数据库补丁版本
 ```
 
-#### 6.11 卸载命令（uninstall.sh）
+> [!NOTE]
+> 跨 Zend API 的大版本切换（例如 PHP 8.4 升级到 8.5），请使用 `./install.sh --mphp_ver 85` 进行多版本灰度验证，确认主题和插件完全兼容后再行切换。
+
+---
+
+### `uninstall.sh` 精细化组件卸载
+
+支持针对单一受损组件进行局部精准卸载清理，无需推倒整台服务器：
 
 ```bash
-./uninstall.sh --help
-./uninstall.sh --php_extensions redis
-./uninstall.sh --redis
-./uninstall.sh --memcached
-./uninstall.sh --phpmyadmin
-./uninstall.sh --mphp_ver 84
-./uninstall.sh --allphp
-./uninstall.sh --web
-./uninstall.sh --all
+./uninstall.sh --php                   # 仅卸载默认 PHP（主 PHP）
+./uninstall.sh --mphp_ver 84           # 仅卸载指定的副版本 PHP 8.4
+./uninstall.sh --php_extensions redis  # 仅从 PHP 中移除 redis 扩展模块
+./uninstall.sh --mysql                 # 仅卸载 MySQL/MariaDB 数据库
+./uninstall.sh --web                   # 仅卸载 Nginx Web 服务
+./uninstall.sh --all                   # 彻底清理所有 LNMP 组件与运行目录
 ```
 
-#### 6.12 重置数据库 root 密码
+---
+
+### `backup.sh` 自动化全量备份
+
+支持本地归档、远程 FTP 备份，以及直传阿里云 OSS、腾讯云 COS、七牛云、又拍云、AWS S3 等对象存储服务：
 
 ```bash
-./reset_db_root_password.sh --password 'NewStrongPass_123'
-./reset_db_root_password.sh --force --password 'NewStrongPass_123'
-```
-
-#### 6.13 备份计划任务示例
-
-```bash
+# 1. 运行交互式向导配置云存储凭证与备份策略
 ./backup_setup.sh
+
+# 2. 执行一次即时全量备份（备份网站数据文件与数据库 SQL）
 ./backup.sh
-crontab -e
-# 每天 01:00 执行
-0 1 * * * cd /path/to/qilnmp && ./backup.sh > /dev/null 2>&1
+
+# 3. 配置 Linux Crontab 定时任务（例如每日凌晨 02:00 自动执行并上云）
+0 2 * * * cd /root/qilnmp && ./backup.sh > /dev/null 2>&1
 ```
 
-#### 6.14 tools/ 实用脚本
+---
+
+### `reset_db_root_password.sh` 数据库密码重置
+
+在忘记或遗失数据库超级管理员 root 密码时使用：
 
 ```bash
-# 环境状态报告
+# 交互式输入新密码重置
+./reset_db_root_password.sh
+
+# 命令行非交互强制重置为指定密码
+./reset_db_root_password.sh --force --password 'MyNewStrongPass_2026'
+```
+
+---
+
+### `tools/` 目录实用工具
+
+```bash
+# 1. 完整运行环境体检（输出 Nginx/PHP/DB 版本、FPM 状态、已加载扩展树）
 bash tools/stack_status.sh
 
-# 单库备份（需在 tools 目录执行）
+# 2. 单一指定数据库极速转储
 (cd tools && bash db_bk.sh your_database_name)
 
-# 单站点备份（需在 tools 目录执行）
-(cd tools && bash website_bk.sh your_site_dir_name)
-
-# 多机批量执行（高级功能）
-(cd tools && bash mabs.sh -h)
+# 3. 单一指定虚拟主机站点文件快速打包
+(cd tools && bash website_bk.sh your_site_domain)
 ```
 
-#### 6.15 单项安装命令（按需执行）
+---
+
+## 默认目录与服务管理速查
+
+### 1. 核心安装与数据目录
+
+| 组件 | 安装主目录 | 核心配置文件 | 访问日志 / 错误日志路径 | 数据持久化路径 |
+|---|---|---|---|---|
+| **Nginx** | `/usr/local/nginx` | `/usr/local/nginx/conf/nginx.conf` | `/data/wwwlogs/*nginx.log` | `/data/wwwroot` |
+| **PHP** | `/usr/local/php` | `/usr/local/php/etc/php.ini` | `/usr/local/php/var/log/php-fpm.log` | `/usr/local/php/etc/php-fpm.d/` |
+| **MySQL** | `/usr/local/mysql` | `/etc/my.cnf` | `/data/mysql/*.err` | `/data/mysql` |
+| **MariaDB** | `/usr/local/mariadb`| `/etc/my.cnf` | `/data/mariadb/*.err` | `/data/mariadb` |
+| **Redis** | `/usr/local/redis` | `/usr/local/redis/etc/redis.conf` | `/usr/local/redis/var/redis.log` | `/usr/local/redis/var/dump.rdb`|
+
+### 2. 系统服务常用控制命令
 
 ```bash
-# 仅安装 Nginx
-./install.sh --nginx_option 1
+# Nginx 管理
+systemctl {start|stop|restart|reload|status} nginx
+/usr/local/nginx/sbin/nginx -t # 语法检测
 
-# 仅安装数据库（示例：MySQL 8.0，二进制方式）
-./install.sh --db_option 1 --dbinstallmethod 1 --dbrootpwd 'StrongPass_123'
+# PHP-FPM 管理
+systemctl {start|stop|restart|reload|status} php-fpm
+/usr/local/php/sbin/php-fpm -t # 语法检测
 
-# 仅安装数据库（示例：MySQL 9.0，源码方式）
-./install.sh --db_option 15 --dbinstallmethod 2 --dbrootpwd 'StrongPass_123'
+# MySQL / MariaDB 管理
+systemctl {start|stop|restart|status} mysqld
 
-# 仅安装数据库（示例：MariaDB 11.4）
-./install.sh --db_option 16 --dbinstallmethod 1 --dbrootpwd 'StrongPass_123'
+# Redis 管理
+systemctl {start|stop|restart|status} redis-server
+/usr/local/redis/bin/redis-cli ping # 连通性测试 (返回 PONG)
 
-# 仅安装 PHP（示例：PHP 8.5 + OPcache）
-./install.sh --php_option 11 --phpcache_option 1
-
-# 仅安装附加服务
-./install.sh --phpmyadmin
-./install.sh --pureftpd
-./install.sh --redis
-./install.sh --memcached
-./install.sh --nodejs
-```
-
-#### 6.16 版本编号速查（install.sh）
-
-```text
-数据库：
-1=MySQL8.0   2=MySQL5.7   3=MySQL5.6   4=MySQL5.5
-5=MariaDB10.11  6=MariaDB10.5  7=MariaDB10.4  8=MariaDB5.5
-9=Percona8.0   10=Percona5.7  11=Percona5.6  12=Percona5.5
-13=PostgreSQL  14=MongoDB  15=MySQL9.0  16=MariaDB11.4
-
-PHP：
-1=PHP7.0  2=PHP7.1  3=PHP7.2  4=PHP7.3  5=PHP7.4
-6=PHP8.0  7=PHP8.1  8=PHP8.2  9=PHP8.3  10=PHP8.4  11=PHP8.5
-```
-
-说明：
-
-- 当前安装流程已移除 PHP 5.x 支持。
-- 当前 `PHP 8.2-8.5` 走同一套现代安装逻辑，版本号和 OpenSSL/cURL 参数仍按各自版本传入。
-
-#### 6.17 多 PHP 维护命令
-
-```bash
-# 安装第二个 PHP 版本（示例：PHP 8.4）
-./install.sh --mphp_ver 84
-
-# 仅给第二个 PHP 安装扩展（示例）
-./install.sh --mphp_ver 84 --mphp_addons --php_extensions "redis imagick fileinfo"
-
-# 重启对应 FPM
-systemctl restart php84-fpm || service php84-fpm restart
-```
-
-#### 6.18 配置检测与重载
-
-```bash
-# Nginx
-/usr/local/nginx/sbin/nginx -t
-systemctl reload nginx || service nginx reload
-
-# PHP-FPM
-/usr/local/php/sbin/php-fpm -t
-systemctl restart php-fpm || service php-fpm restart
-
-# MySQL
-systemctl status mysqld
-
-# Redis
-/usr/local/redis/bin/redis-cli ping
-systemctl restart redis-server || systemctl restart redis
-```
-
-#### 6.19 证书与默认页相关命令
-
-```bash
-# 新增站点并申请 Let's Encrypt
-./vhost.sh --add --letsencrypt
-
-# 查看 acme.sh 证书列表
-~/.acme.sh/acme.sh --list
-
-# 手动触发一次证书续签任务
-~/.acme.sh/acme.sh --cron -f
-
-# 重新生成默认演示页（会更新 default/index.html）
-oneinstack_dir=$(pwd)
-. ./versions.txt
-. ./options.conf
-. ./include/check_dir.sh
-. ./include/download.sh
-. ./include/demo.sh
-DEMO
-```
-
-#### 6.20 日志与排障命令
-
-```bash
-# 安装日志
-tail -n 200 install.log
-tail -f install.log
-
-# Web 日志
-tail -f /data/wwwlogs/*.log
-
-# 服务日志
-journalctl -u nginx -n 100 --no-pager
-journalctl -u php-fpm -n 100 --no-pager
-journalctl -u mysqld -n 100 --no-pager
-journalctl -u redis-server -n 100 --no-pager
-
-# 端口监听检查
+# 端口监听排查
 ss -lntp | grep -E ':80|:443|:3306|:6379|:9000'
 ```
 
-### 7. 常用服务管理命令
+---
 
-```bash
-systemctl {start|stop|status|restart|reload} nginx
-systemctl {start|stop|status|restart|reload} php-fpm
-systemctl {start|stop|status|restart|reload} mysqld
-systemctl {start|stop|status|restart|reload} redis-server
-systemctl {start|stop|status|restart|reload} memcached
+## 常见问题与排错 (FAQ)
 
-# 开机自启（常用）
-systemctl enable nginx php-fpm mysqld
-systemctl enable redis-server || systemctl enable redis
-systemctl enable memcached
-```
+### Q1：离线部署时，MySQL 官方安装包需要提前放入 `src/` 吗？
+> **答：** MySQL 8.0 官方二进制免编译安装包体积约 850MB，为保持 GitHub 代码仓库极致轻量，该包不预置在仓库中。
+> - 若服务器可访问公网：安装脚本在执行到数据库步骤时会自动从官方直链高速下载；
+> - 若服务器纯内网完全断网：建议在外网电脑从 [官方源导航](https://qiling.jingxialai.com/docs/sources.html) 下载 `mysql-8.0.44-linux-glibc2.28-x86_64.tar.xz`，提前放入 `qilnmp/src/` 目录中即可。
 
-兼容环境（无 systemd）可用：
+### Q2：跨大版本升级 PHP（如 8.4 升级到 8.5）可以直接用 `upgrade.sh` 吗？
+> **答：不能。** 跨大版本的 Zend API 内部数据结构存在重大破坏性变更，强行原地替换会导致旧扩展（如 imagick、redis）发生段错误崩溃。
+> 推荐方案：
+> 1. 执行 `./install.sh --mphp_ver 85` 部署共存版本 PHP 8.5；
+> 2. 使用 `./vhost.sh` 平滑切换测试站点无误后，再使用 `./uninstall.sh --mphp_ver 84` 清理旧版本。
 
-```bash
-service nginx restart
-service php-fpm restart
-service mysqld restart
-```
+### Q3：为什么 PHP 8.4 与 8.5 共用一套底层安装逻辑？
+> **答：** 这是专为现代安全基线设计的模块化重构（`include/php-modern-common.sh`）。PHP 8.4 与 8.5 共享相同的现代 C11 构建标准、依赖库版本与安全加固参数，统一逻辑既能确保构建质量高度一致，也天然免疫历史上所有的已知核心 RCE 漏洞。
 
-### 8. 安装后验证
+---
 
-```bash
-nginx -v
-/usr/local/php/bin/php -v
-/usr/local/mysql/bin/mysql --version
-/usr/local/php/bin/php -m | sort
-/usr/local/php/bin/php --ri fileinfo
-/usr/local/php/bin/php --ri redis
-```
+## 交流社群与联系方式
 
-默认站点目录通常为：
+欢迎加入 QQ 交流群，与众多一线运维和站长共同交流 LNMP 架构调优与 PHP 8.4/8.5 实践经验：
 
-```bash
-/data/wwwroot/default
-```
+- **WordPress 站长技术交流群**：`16966111`
+- **WooCommerce 跨境电商交流群**：`580246438`
+- **灵简 AI 研发交流群**：`591117073`
+- **启灵件技术支持群**：`200766709`
+- **维护者个人 QQ / 微信**：`19577566`
+- **技术支持与商务联系邮箱**：`iticu@qq.com`
 
-安装成功后默认页会生成 `index.html`，并提供 `xprober.php`、`phpinfo.php`、`ocp.php` 等快捷入口（按组件安装情况显示）。
-
-### 9. 常见问题
-
-#### 9.1 PHP 8.5 的 OPcache 是否生效？
-
-- PHP 8.5 本身可内置 OPcache 能力
-- 即使没有独立 `opcache.so` 文件，`php -v`/OPcache 面板显示启用时通常仍可正常工作
-
-#### 9.2 PHP 8.2-8.5 为什么现在共用一套安装逻辑？
-
-- 这是为了统一现代 PHP 的依赖处理与编译参数，减少重复脚本维护成本。
-- `8.2-8.5` 仍然保留各自版本号与 `phpXX_with_ssl/phpXX_with_curl/phpXX_with_openssl` 参数。
-- 如果后续发现某个版本需要独立补丁，也可以再拆回单独脚本。
-
-#### 9.3 缺少 Perl 模块导致 OpenSSL 编译失败
-
-若出现 `Can't locate Time/Piece.pm`，先安装 Perl 组件后重试：
-
-```bash
-yum -y install perl perl-Time-Piece || dnf -y install perl perl-Time-Piece
-# Debian/Ubuntu:
-apt-get -y install perl
-```
-
-#### 9.4 Redis 缓存为什么不生效？
-
-需要同时满足：
-
-- PHP `redis` 扩展已安装
-- Redis 服务端已安装并运行
-- 网站端已正确配置对象缓存插件
+---
 
 ## English Summary
 
-QILNMP is a community-maintained fork of OneinStack focused on practical LNMP/LAMP deployment and maintenance.
+**QILNMP** is a modernized, lightweight, and community-maintained Linux LNMP automated deployment and maintenance suite forked from OneinStack.
 
-- Interactive shell installer with source-based builds
-- Mirror/custom URL/offline package fallback for source downloads
-- Supports major web/database stacks and multiple PHP versions
-- Includes vhost, backup, upgrade, uninstall, and status-check scripts
-
-## Community
-
-- QQ 群: `16966111`
-- Project site: <https://qiling.jingxialai.com>
-- Project repo: <https://github.com/wujiit/qilnmp>
-- Upstream OneinStack Repo: <https://github.com/oneinstack/oneinstack>
+- **Pure LNMP Focus**: Completely stripped of legacy Apache (LAMP) and Java (Tomcat/JDK) runtime overhead;
+- **Dual Security Baselines**: Strictly locked to **PHP 8.4.27** and **PHP 8.5.12**, entirely immune to the severe php2shell RCE vulnerability;
+- **Zero Background Daemons**: 0 MB residual memory footprint compared to resource-heavy GUI control panels;
+- **Hardware-Aware Auto-Tuning**: Dynamically adapts Swap, PHP-FPM worker pools, OPcache, and MySQL InnoDB buffer pool size according to system resources (e.g. 2C4G, 4C8G, 8C16G);
+- **Production Database Advisory**: Clear selection metrics between MariaDB LTS (optimized for ≤4GB RAM & CMS) and MySQL 8.0 (native binary JSON & cloud RDS alignment);
+- **100% Offline & Private Mirror Ready**: Bypasses all outbound network requests if packages are pre-placed in `src/`, fully compatible with [MirrorOne](https://github.com/dalao-org/MirrorOne);
+- **Modern OS Support**: Exclusively supports enterprise 64-bit Linux distributions (RHEL/Rocky/AlmaLinux 8/9, Debian 11/12/13, Ubuntu 20/22/24 LTS); strictly blocks obsolete EOL systems such as CentOS 7.

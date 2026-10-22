@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 #
-# Notes: QILNMP for CentOS/RedHat 7+ Debian 9+ and Ubuntu 16+
+# Notes: QILNMP for Rocky/Alma/RHEL 8+ Debian 11+ and Ubuntu 20+ (64-bit)
 #
 # Project home page:
 #       https://oneinstack.com
@@ -18,7 +18,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
-#       QILNMP for CentOS/RedHat 7+ Debian 9+ and Ubuntu 16+      #
+#   QILNMP for Rocky/Alma/RHEL 8+ Debian 11+ Ubuntu 20+ (64-bit)      #
 #                         Uninstall QILNMP                        #
 #      For more information please visit https://qiling.jingxialai.com #
 #######################################################################
@@ -44,7 +44,7 @@ Show_Help() {
   --postgresql                  Uninstall PostgreSQL
   --mongodb                     Uninstall MongoDB
   --php                         Uninstall PHP (PATH: ${php_install_dir})
-  --mphp_ver [53~85]            Uninstall another PHP version (PATH: ${php_install_dir}\${mphp_ver})
+  --mphp_ver [84~85]            Uninstall another PHP version (PATH: ${php_install_dir}\${mphp_ver})
   --allphp                      Uninstall all PHP
   --phpcache                    Uninstall PHP opcode cache
   --php_extensions [ext name]   Uninstall PHP extensions, include zendguardloader,ioncube,
@@ -54,12 +54,11 @@ Show_Help() {
   --redis                       Uninstall Redis-server
   --memcached                   Uninstall Memcached-server
   --phpmyadmin                  Uninstall phpMyAdmin
-  --nodejs                      Uninstall Nodejs (PATH: ${nodejs_install_dir})
   "
 }
 
 ARG_NUM=$#
-TEMP=`getopt -o hvVq --long help,version,quiet,all,web,mysql,postgresql,mongodb,php,mphp_ver:,allphp,phpcache,php_extensions:,pureftpd,redis,memcached,phpmyadmin,nodejs -- "$@" 2>/dev/null`
+TEMP=`getopt -o hvVq --long help,version,quiet,all,web,mysql,postgresql,mongodb,php,mphp_ver:,allphp,phpcache,php_extensions:,pureftpd,redis,memcached,phpmyadmin -- "$@" 2>/dev/null`
 [ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
 eval set -- "${TEMP}"
 while :; do
@@ -80,7 +79,6 @@ while :; do
       postgresql_flag=y
       mongodb_flag=y
       allphp_flag=y
-      nodejs_flag=y
       pureftpd_flag=y
       redis_flag=y
       memcached_flag=y
@@ -104,7 +102,7 @@ while :; do
       ;;
     --mphp_ver)
       mphp_ver=$2; mphp_flag=y; shift 2
-      [[ ! "${mphp_ver}" =~ ^5[3-6]$|^7[0-4]$|^8[0-5]$ ]] && { echo "${CWARNING}mphp_ver input error! Please only input number 53~85${CEND}"; exit 1; }
+      [[ ! "${mphp_ver}" =~ ^8[4-5]$ ]] && { echo "${CWARNING}mphp_ver input error! Please only input 84 or 85${CEND}"; exit 1; }
       ;;
     --allphp)
       allphp_flag=y; shift 1
@@ -132,9 +130,6 @@ while :; do
       [ -n "`echo ${php_extensions} | grep -w mongodb`" ] && pecl_mongodb=1
       [ -n "`echo ${php_extensions} | grep -w swoole`" ] && pecl_swoole=1
       [ -n "`echo ${php_extensions} | grep -w xdebug`" ] && pecl_xdebug=1
-      ;;
-    --nodejs)
-      nodejs_flag=y; shift 1
       ;;
     --pureftpd)
       pureftpd_flag=y; shift 1
@@ -569,11 +564,6 @@ Uninstall_openssl() {
   [ -d "${openssl_install_dir}" ] && rm -rf ${openssl_install_dir}
 }
 
-Print_Nodejs() {
-  [ -e "${nodejs_install_dir}" ] && echo ${nodejs_install_dir}
-  [ -e "/etc/profile.d/nodejs.sh" ] && echo /etc/profile.d/nodejs.sh
-}
-
 Menu() {
 while :; do
   printf "
@@ -590,13 +580,12 @@ What Are You Doing?
 \t${CMSG} 9${CEND}. Uninstall Redis
 \t${CMSG}10${CEND}. Uninstall Memcached
 \t${CMSG}11${CEND}. Uninstall phpMyAdmin
-\t${CMSG}12${CEND}. Uninstall Nodejs (PATH: ${nodejs_install_dir})
 \t${CMSG} q${CEND}. Exit
 "
   echo
   read -e -p "Please input the correct option: " Number
-  if [[ ! "${Number}" =~ ^[0-9,q]$|^1[0-3]$ ]]; then
-    echo "${CWARNING}input error! Please only input 0~12 and q${CEND}"
+  if [[ ! "${Number}" =~ ^[0-9,q]$|^1[0-1]$ ]]; then
+    echo "${CWARNING}input error! Please only input 0~11 and q${CEND}"
   else
     case "$Number" in
     0)
@@ -611,7 +600,6 @@ What Are You Doing?
       Print_Memcached_server
       Print_openssl
       Print_phpMyAdmin
-      Print_Nodejs
       Uninstall_status
       if [ "${uninstall_flag}" == 'y' ]; then
         Uninstall_Web
@@ -624,7 +612,6 @@ What Are You Doing?
         Uninstall_Memcached_server
         Uninstall_openssl
         Uninstall_phpMyAdmin
-        . include/nodejs.sh; Uninstall_Nodejs
       else
         exit
       fi
@@ -687,11 +674,6 @@ What Are You Doing?
       Uninstall_status
       [ "${uninstall_flag}" == 'y' ] && Uninstall_phpMyAdmin || exit
       ;;
-    12)
-      Print_Nodejs
-      Uninstall_status
-      [ "${uninstall_flag}" == 'y' ] && { . include/nodejs.sh; Uninstall_Nodejs; } || exit
-      ;;
     q)
       exit
       ;;
@@ -717,7 +699,6 @@ else
   [ "${redis_flag}" == 'y' ] && Print_Redis_server
   [ "${memcached_flag}" == 'y' ] && Print_Memcached_server
   [ "${phpmyadmin_flag}" == 'y' ] && Print_phpMyAdmin
-  [ "${nodejs_flag}" == 'y' ] && Print_Nodejs
   [ "${all_flag}" == 'y' ] && Print_openssl
   Uninstall_status
   if [ "${uninstall_flag}" == 'y' ]; then
@@ -739,7 +720,6 @@ else
     [ "${redis_flag}" == 'y' ] && Uninstall_Redis_server
     [ "${memcached_flag}" == 'y' ] && Uninstall_Memcached_server
     [ "${phpmyadmin_flag}" == 'y' ] && Uninstall_phpMyAdmin
-    [ "${nodejs_flag}" == 'y' ] && { . include/nodejs.sh; Uninstall_Nodejs; }
     [ "${all_flag}" == 'y' ] && Uninstall_openssl
   fi
 fi

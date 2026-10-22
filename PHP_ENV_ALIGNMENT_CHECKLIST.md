@@ -35,8 +35,8 @@ Mirror metadata: generated from a historical mirror snapshot. Actual runtime mir
 | DB | Boost (MySQL source build) | `boost_ver=1.90.0` | `1.90.0 / 1.90.0` | `boost_1_90_0.tar.gz` | yes | yes | aligned | No change |
 | DB | Redis (server) | `redis_ver=8.6.1` | `8.6.1 / 8.6.1` | `redis-8.6.1.tar.gz` | yes | yes | aligned | No change |
 | DB | Memcached (server) | `memcached_ver=1.6.9` | `1.6.9 / 1.6.9` | `memcached-1.6.9.tar.gz` | yes | yes | aligned | No change |
-| PHP Core | PHP 8.4 | `php84_ver=8.4.18` | `8.4.18 / 8.4.18` | `php-8.4.18.tar.gz` | yes | yes | aligned | No change |
-| PHP Core | PHP 8.5 | `php85_ver=8.5.3` | `- / -` | `php-8.5.3.tar.gz` | yes | yes | aligned | No change |
+| PHP Core | PHP 8.4 | `php84_ver=8.4.27` | `8.4.27 / 8.4.27` | `php-8.4.27.tar.gz` | yes | yes | aligned | Hardened baseline |
+| PHP Core | PHP 8.5 | `php85_ver=8.5.12` | `- / -` | `php-8.5.12.tar.gz` | yes | yes | aligned | Hardened baseline |
 | PHP Deps | argon2 | `argon2_ver=20190702` | `20190702 / 20190702` | `argon2-20190702.tar.gz` | yes | yes | aligned | No change |
 | PHP Deps | libsodium | `libsodium_up_ver=1.0.21` | `1.0.21 / 1.0.21` | `libsodium-1.0.21.tar.gz` | yes | yes | aligned | No change |
 | PHP Deps | libzip | `libzip_ver=1.11.4` | `1.11.4 / 1.11.4` | `libzip-1.11.4.tar.gz` | yes | yes | aligned | No change |

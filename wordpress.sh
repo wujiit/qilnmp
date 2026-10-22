@@ -41,7 +41,7 @@ Usage: $0 [options]
   --db-user-host HOST         MySQL grant host when auto creating DB user
   --table-prefix PREFIX       WordPress table prefix
   --db-root-pass PASS         Database root password
-  --mphp_ver [70~85]          Use another PHP-FPM socket, for example: 84
+  --mphp_ver [84~85]          Use another PHP-FPM socket, for example: 84
   --wp-version VERSION        WordPress version or latest (default: latest)
   --ssl-redirect [y|n]        Redirect HTTP to HTTPS when SSL is enabled
 
@@ -486,8 +486,8 @@ ensure_inputs() {
   fi
   validate_table_prefix
 
-  if [ -n "${mphp_ver}" ] && [[ ! "${mphp_ver}" =~ ^7[0-4]$|^8[0-5]$ ]]; then
-    fail "mphp_ver only supports 70~85"
+  if [ -n "${mphp_ver}" ] && [[ ! "${mphp_ver}" =~ ^8[4-5]$ ]]; then
+    fail "mphp_ver only supports 84 or 85 (PHP < 8.4 discontinued for security)"
   fi
 
   validate_wp_version

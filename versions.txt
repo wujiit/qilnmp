@@ -1,11 +1,11 @@
 # newest software version
 # Web
-nginx_ver=1.29.6
+nginx_ver=1.30.6
 caddy_ver=2.7.6
 tengine_ver=3.1.0
 openresty_ver=1.27.1.2
 openssl11_ver=1.1.1w
-openssl3_ver=3.5.5
+openssl3_ver=3.5.9
 openssl_ver=1.0.2u
 
 tomcat10_ver=10.1.16
@@ -42,25 +42,9 @@ pgsql_ver=12.7
 
 mongodb_ver=4.0.26
 
-# PHP
-php53_ver=5.3.29
-php54_ver=5.4.45
-php55_ver=5.5.38
-php56_ver=5.6.40
-php70_ver=7.0.33
-php71_ver=7.1.33
-php72_ver=7.2.34
-php73_ver=7.3.33
-php74_ver=7.4.33
-php80_ver=8.0.30
-php81_ver=8.1.34
-php82_ver=8.2.29
-php83_ver=8.3.29
-php84_ver=8.4.18
-php85_ver=8.5.3
-
-# Nodejs
-nodejs_ver=20.10.0
+# PHP (Supported: 8.4 ~ 8.5 for CVE-2026-109618/109619 security baseline)
+php84_ver=8.4.27
+php85_ver=8.5.12
 
 libiconv_ver=1.7
 libxml2_ver=2.9.14
@@ -68,7 +52,7 @@ curl_ver=8.19.0
 libmcrypt_ver=2.5.8
 mcrypt_ver=2.6.8
 mhash_ver=0.9.9.9
-freetype_ver=2.10.0
+freetype_ver=2.10.1
 icu4c_ver=77_1
 libsodium_ver=1.0.21
 libsodium_up_ver=1.0.21

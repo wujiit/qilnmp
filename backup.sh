@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 #
-# Notes: QILNMP for CentOS/RedHat 7+ Debian 9+ and Ubuntu 16+
+# Notes: QILNMP for Rocky/Alma/RHEL 8+ Debian 11+ and Ubuntu 20+ (64-bit)
 #
 # Project home page:
 #       https://oneinstack.com

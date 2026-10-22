@@ -499,8 +499,8 @@ checkDownload() {
     esac
   fi
 
-  # PHP
-  if [[ "${php_option}" =~ ^[5-9]$|^1[0-5]$ ]] || [[ "${mphp_ver}" =~ ^7[0-4]$|^8[0-5]$ ]]; then
+  # PHP (Supported: 8.2 ~ 8.5)
+  if [[ "${php_option}" =~ ^1[2-5]$ ]] || [[ "${mphp_ver}" =~ ^8[2-5]$ ]]; then
     echo "PHP common..."
     src_url=${mirror_link}/src/libiconv-${libiconv_ver}.tar.gz
     src_url_backup=https://ftp.gnu.org/pub/gnu/libiconv/libiconv-${libiconv_ver}.tar.gz
@@ -514,211 +514,48 @@ checkDownload() {
     src_url_backup=https://downloads.sourceforge.net/project/mhash/mhash/${mhash_ver}/mhash-${mhash_ver}.tar.gz
     Download_src; unset src_url_backup
 
-    src_url=${mirror_link}/src/libmcrypt-${libmcrypt_ver}.tar.gz
-    src_url_backup=https://downloads.sourceforge.net/project/mcrypt/Libmcrypt/${libmcrypt_ver}/libmcrypt-${libmcrypt_ver}.tar.gz
-    Download_src; unset src_url_backup
-
-    src_url=${mirror_link}/src/mcrypt-${mcrypt_ver}.tar.gz
-    src_url_backup=https://downloads.sourceforge.net/project/mcrypt/MCrypt/${mcrypt_ver}/mcrypt-${mcrypt_ver}.tar.gz
-    Download_src; unset src_url_backup
-
     src_url=${mirror_link}/src/freetype-${freetype_ver}.tar.gz
     src_url_backup=https://downloads.sourceforge.net/project/freetype/freetype2/${freetype_ver}/freetype-${freetype_ver}.tar.gz
     Download_src; unset src_url_backup
+
+    # Shared modern PHP dependencies
+    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz
+    src_url_backup=https://github.com/P-H-C/phc-winner-argon2/archive/refs/tags/${argon2_ver}.tar.gz
+    Download_src; unset src_url_backup
+
+    src_url=${mirror_link}/src/libsodium-${libsodium_up_ver}.tar.gz
+    src_url_backup=https://download.libsodium.org/libsodium/releases/libsodium-${libsodium_up_ver}.tar.gz
+    Download_src; unset src_url_backup
+
+    src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz
+    src_url_backup=https://libzip.org/download/libzip-${libzip_ver}.tar.gz
+    Download_src; unset src_url_backup
+
+    src_url=${mirror_link}/src/libxml2-${libxml2_ver}.tar.xz
+    src_url_backup=https://download.gnome.org/sources/libxml2/$(echo ${libxml2_ver} | awk -F. '{print $1"."$2}')/libxml2-${libxml2_ver}.tar.xz
+    Download_src; unset src_url_backup
+
+    src_url=${mirror_link}/src/zlib-${zlib_ver}.tar.gz
+    src_url_backup=https://zlib.net/zlib-${zlib_ver}.tar.gz
+    Download_src; unset src_url_backup
+
+    if [ "${php_option}" == '14' ] || [ "${mphp_ver}" == '84' ]; then
+      src_url=${mirror_link}/src/php-${php84_ver}.tar.gz
+      src_url_backup=https://www.php.net/distributions/php-${php84_ver}.tar.gz
+      Download_src; unset src_url_backup
+    elif [ "${php_option}" == '15' ] || [ "${mphp_ver}" == '85' ]; then
+      src_url=${mirror_link}/src/php-${php85_ver}.tar.gz
+      src_url_backup=https://www.php.net/distributions/php-${php85_ver}.tar.gz
+      Download_src; unset src_url_backup
+    fi
   fi
 
-  if [ "${php_option}" == '1' ]; then
-    src_url=${mirror_link}/src/debian_patches_disable_SSLv2_for_openssl_1_0_0.patch && Download_src
-    src_url=${mirror_link}/src/php5.3patch && Download_src
-    src_url=${mirror_link}/src/php-${php53_ver}.tar.gz
-    src_url_backup=https://www.php.net/distributions/php-${php53_ver}.tar.gz
+  # PHP APCu
+  if [ "${phpcache_option}" == '2' ]; then
+    echo "Download apcu..."
+    src_url=${mirror_link}/src/apcu-${apcu_ver}.tgz
+    src_url_backup=https://pecl.php.net/get/apcu-${apcu_ver}.tgz
     Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/fpm-race-condition.patch && Download_src
-  elif [ "${php_option}" == '2' ]; then
-    src_url=${mirror_link}/src/php-${php54_ver}.tar.gz
-    src_url_backup=https://www.php.net/distributions/php-${php54_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/fpm-race-condition.patch && Download_src
-  elif [ "${php_option}" == '3' ]; then
-    src_url=${mirror_link}/src/php-${php55_ver}.tar.gz
-    src_url_backup=https://www.php.net/distributions/php-${php55_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/fpm-race-condition.patch && Download_src
-  elif [ "${php_option}" == '4' ]; then
-    src_url=${mirror_link}/src/php-${php56_ver}.tar.gz
-    src_url_backup=https://www.php.net/distributions/php-${php56_ver}.tar.gz
-    Download_src; unset src_url_backup
-  elif [ "${php_option}" == '5' ] || [ "${mphp_ver}" == '70' ]; then
-    src_url=${mirror_link}/src/php-${php70_ver}.tar.gz
-    src_url_backup=https://www.php.net/distributions/php-${php70_ver}.tar.gz
-    Download_src; unset src_url_backup
-  elif [ "${php_option}" == '6' ] || [ "${mphp_ver}" == '71' ]; then
-    src_url=${mirror_link}/src/php-${php71_ver}.tar.gz
-    src_url_backup=https://www.php.net/distributions/php-${php71_ver}.tar.gz
-    Download_src; unset src_url_backup
-  elif [ "${php_option}" == '7' ] || [ "${mphp_ver}" == '72' ]; then
-    src_url=${mirror_link}/src/php-${php72_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-  elif [ "${php_option}" == '8' ] || [ "${mphp_ver}" == '73' ]; then
-    src_url=${mirror_link}/src/php-${php73_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-  elif [ "${php_option}" == '9' ] || [ "${mphp_ver}" == '74' ]; then
-    src_url=${mirror_link}/src/php-${php74_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz && Download_src
-  elif [ "${php_option}" == '10' ] || [ "${mphp_ver}" == '80' ]; then
-    src_url=${mirror_link}/src/php-${php80_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz && Download_src
-  elif [ "${php_option}" == '11' ] || [ "${mphp_ver}" == '81' ]; then
-    src_url=${mirror_link}/src/php-${php81_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/libsodium-${libsodium_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz && Download_src
-  elif [ "${php_option}" == '12' ] || [ "${mphp_ver}" == '82' ]; then
-    src_url=${mirror_link}/src/php-${php82_ver}.tar.gz
-    src_url_backup=https://www.php.net/distributions/php-${php82_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz
-    src_url_backup=https://github.com/P-H-C/phc-winner-argon2/archive/refs/tags/${argon2_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/libsodium-${libsodium_up_ver}.tar.gz
-    src_url_backup=https://download.libsodium.org/libsodium/releases/libsodium-${libsodium_up_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz
-    src_url_backup=https://libzip.org/download/libzip-${libzip_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/libxml2-${libxml2_ver}.tar.xz
-    src_url_backup=https://download.gnome.org/sources/libxml2/$(echo ${libxml2_ver} | awk -F. '{print $1"."$2}')/libxml2-${libxml2_ver}.tar.xz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/zlib-${zlib_ver}.tar.gz
-    src_url_backup=https://zlib.net/zlib-${zlib_ver}.tar.gz
-    Download_src; unset src_url_backup
-  elif [ "${php_option}" == '13' ] || [ "${mphp_ver}" == '83' ]; then
-    src_url=${mirror_link}/src/php-${php83_ver}.tar.gz
-    src_url_backup=https://www.php.net/distributions/php-${php83_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz
-    src_url_backup=https://github.com/P-H-C/phc-winner-argon2/archive/refs/tags/${argon2_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/libsodium-${libsodium_up_ver}.tar.gz
-    src_url_backup=https://download.libsodium.org/libsodium/releases/libsodium-${libsodium_up_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz
-    src_url_backup=https://libzip.org/download/libzip-${libzip_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/libxml2-${libxml2_ver}.tar.xz
-    src_url_backup=https://download.gnome.org/sources/libxml2/$(echo ${libxml2_ver} | awk -F. '{print $1"."$2}')/libxml2-${libxml2_ver}.tar.xz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/zlib-${zlib_ver}.tar.gz
-    src_url_backup=https://zlib.net/zlib-${zlib_ver}.tar.gz
-    Download_src; unset src_url_backup
-  elif [ "${php_option}" == '14' ] || [ "${mphp_ver}" == '84' ]; then
-    src_url=${mirror_link}/src/php-${php84_ver}.tar.gz
-    src_url_backup=https://www.php.net/distributions/php-${php84_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz
-    src_url_backup=https://github.com/P-H-C/phc-winner-argon2/archive/refs/tags/${argon2_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/libsodium-${libsodium_up_ver}.tar.gz
-    src_url_backup=https://download.libsodium.org/libsodium/releases/libsodium-${libsodium_up_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz
-    src_url_backup=https://libzip.org/download/libzip-${libzip_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/libxml2-${libxml2_ver}.tar.xz
-    src_url_backup=https://download.gnome.org/sources/libxml2/$(echo ${libxml2_ver} | awk -F. '{print $1"."$2}')/libxml2-${libxml2_ver}.tar.xz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/zlib-${zlib_ver}.tar.gz
-    src_url_backup=https://zlib.net/zlib-${zlib_ver}.tar.gz
-    Download_src; unset src_url_backup
-  elif [ "${php_option}" == '15' ] || [ "${mphp_ver}" == '85' ]; then
-    src_url=${mirror_link}/src/php-${php85_ver}.tar.gz
-    src_url_backup=https://www.php.net/distributions/php-${php85_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/argon2-${argon2_ver}.tar.gz
-    src_url_backup=https://github.com/P-H-C/phc-winner-argon2/archive/refs/tags/${argon2_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/libsodium-${libsodium_up_ver}.tar.gz
-    src_url_backup=https://download.libsodium.org/libsodium/releases/libsodium-${libsodium_up_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/libzip-${libzip_ver}.tar.gz
-    src_url_backup=https://libzip.org/download/libzip-${libzip_ver}.tar.gz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/libxml2-${libxml2_ver}.tar.xz
-    src_url_backup=https://download.gnome.org/sources/libxml2/$(echo ${libxml2_ver} | awk -F. '{print $1"."$2}')/libxml2-${libxml2_ver}.tar.xz
-    Download_src; unset src_url_backup
-    src_url=${mirror_link}/src/zlib-${zlib_ver}.tar.gz
-    src_url_backup=https://zlib.net/zlib-${zlib_ver}.tar.gz
-    Download_src; unset src_url_backup
-  fi
-
-  # PHP OPCache
-  case "${phpcache_option}" in
-    1)
-      if [[ "${php_option}" =~ ^[1-2]$ ]]; then
-        # php 5.3 5.4
-        echo "Download Zend OPCache..."
-        src_url=${mirror_link}/src/zendopcache-${zendopcache_ver}.tgz
-        src_url_backup=https://pecl.php.net/get/zendopcache-${zendopcache_ver}.tgz
-        Download_src; unset src_url_backup
-      fi
-      ;;
-    2)
-      echo "Download apcu..."
-      if [[ "${php_option}" =~ ^[1-4]$ ]]; then
-        src_url=${mirror_link}/src/apcu-${apcu_oldver}.tgz
-        src_url_backup=https://pecl.php.net/get/apcu-${apcu_oldver}.tgz
-        Download_src; unset src_url_backup
-      else
-        src_url=${mirror_link}/src/apcu-${apcu_ver}.tgz
-        src_url_backup=https://pecl.php.net/get/apcu-${apcu_ver}.tgz
-        Download_src; unset src_url_backup
-      fi
-      ;;
-    3)
-      if [[ "${php_option}" =~ ^[1-4]$ ]]; then
-        # php 5.3 5.4 5.5 5.6
-        echo "Download xcache..."
-        src_url=http://xcache.lighttpd.net/pub/Releases/${xcache_ver}/xcache-${xcache_ver}.tar.gz && Download_src
-      fi
-      ;;
-    4)
-      # php 5.3 5.4
-      if [ "${php_option}" == '1' ]; then
-        echo "Download eaccelerator 0.9..."
-        src_url=https://github.com/downloads/eaccelerator/eaccelerator/eaccelerator-${eaccelerator_ver}.tar.bz2 && Download_src
-      elif [ "${php_option}" == '2' ]; then
-        echo "Download eaccelerator 1.0 dev..."
-        src_url=https://github.com/eaccelerator/eaccelerator/tarball/master && Download_src
-      fi
-      ;;
-  esac
-
-  # Zend Guard Loader
-  if [ "${pecl_zendguardloader}" == '1' -a "${armplatform}" != 'y' ]; then
-    case "${php_option}" in
-      4)
-        echo "Download zend loader for php 5.6..."
-        src_url=${mirror_link}/src/zend-loader-php5.6-linux-x86_64.tar.gz && Download_src
-        ;;
-      3)
-        echo "Download zend loader for php 5.5..."
-        src_url=${mirror_link}/src/zend-loader-php5.5-linux-x86_64.tar.gz && Download_src
-        ;;
-      2)
-        echo "Download zend loader for php 5.4..."
-        src_url=${mirror_link}/src/ZendGuardLoader-70429-PHP-5.4-linux-glibc23-x86_64.tar.gz && Download_src
-        ;;
-      1)
-        echo "Download zend loader for php 5.3..."
-        src_url=${mirror_link}/src/ZendGuardLoader-php-5.3-linux-glibc23-x86_64.tar.gz && Download_src
-        ;;
-    esac
   fi
 
   # ioncube
@@ -780,22 +617,10 @@ checkDownload() {
 
   # pecl_redis
   if [ "${pecl_redis}" == '1' ]; then
-    if [[ "${php_option}" =~ ^[1-4]$ ]]; then
-      echo "Download pecl_redis for php 5.x..."
-      src_url=${mirror_link}/src/redis-4.3.0.tgz
-      src_url_backup=https://pecl.php.net/get/redis-4.3.0.tgz
-      Download_src; unset src_url_backup
-    elif [[ "${php_option}" =~ ^[5-6]$ ]]; then
-      echo "Download pecl_redis for php 7.0~7.1..."
-      src_url=${mirror_link}/src/redis-5.3.7.tgz
-      src_url_backup=https://pecl.php.net/get/redis-5.3.7.tgz
-      Download_src; unset src_url_backup
-    else
-      echo "Download pecl_redis for php 7.2+..."
-      src_url=${mirror_link}/src/redis-${pecl_redis_ver}.tgz
-      src_url_backup=https://pecl.php.net/get/redis-${pecl_redis_ver}.tgz
-      Download_src; unset src_url_backup
-    fi
+    echo "Download pecl_redis..."
+    src_url=${mirror_link}/src/redis-${pecl_redis_ver}.tgz
+    src_url_backup=https://pecl.php.net/get/redis-${pecl_redis_ver}.tgz
+    Download_src; unset src_url_backup
   fi
 
   # memcached-server
@@ -810,56 +635,26 @@ checkDownload() {
   if [ "${pecl_memcached}" == '1' ]; then
     echo "Download libmemcached..."
     src_url=https://launchpad.net/libmemcached/1.0/${libmemcached_ver}/+download/libmemcached-${libmemcached_ver}.tar.gz && Download_src
-    if [[ "${php_option}" =~ ^[1-4]$ ]]; then
-      echo "Download pecl_memcached for php..."
-      src_url=${mirror_link}/src/memcached-${pecl_memcached_oldver}.tgz
-      src_url_backup=https://pecl.php.net/get/memcached-${pecl_memcached_oldver}.tgz
-      Download_src; unset src_url_backup
-    else
-      echo "Download pecl_memcached for php 7.x..."
-      src_url=${mirror_link}/src/memcached-${pecl_memcached_ver}.tgz
-      src_url_backup=https://pecl.php.net/get/memcached-${pecl_memcached_ver}.tgz
-      Download_src; unset src_url_backup
-    fi
+    echo "Download pecl_memcached..."
+    src_url=${mirror_link}/src/memcached-${pecl_memcached_ver}.tgz
+    src_url_backup=https://pecl.php.net/get/memcached-${pecl_memcached_ver}.tgz
+    Download_src; unset src_url_backup
   fi
 
-  # memcached-server pecl_memcached pecl_memcache
+  # pecl_memcache
   if [ "${pecl_memcache}" == '1' ]; then
-    if [[ "${php_option}" =~ ^[1-4]$ ]]; then
-      echo "Download pecl_memcache for php 5.x..."
-      src_url=${mirror_link}/src/memcache-3.0.8.tgz
-      src_url_backup=https://pecl.php.net/get/memcache-3.0.8.tgz
-      Download_src; unset src_url_backup
-    elif [[ "${php_option}" =~ ^[5-9]$ ]]; then
-      echo "Download pecl_memcache for php 7.x..."
-      src_url=${mirror_link}/src/memcache-${pecl_memcache_oldver}.tgz
-      src_url_backup=https://pecl.php.net/get/memcache-${pecl_memcache_oldver}.tgz
-      Download_src; unset src_url_backup
-    else
-      echo "Download pecl_memcache for php 8.x..."
-      src_url=${mirror_link}/src/memcache-${pecl_memcache_ver}.tgz
-      src_url_backup=https://pecl.php.net/get/memcache-${pecl_memcache_ver}.tgz
-      Download_src; unset src_url_backup
-    fi
+    echo "Download pecl_memcache..."
+    src_url=${mirror_link}/src/memcache-${pecl_memcache_ver}.tgz
+    src_url_backup=https://pecl.php.net/get/memcache-${pecl_memcache_ver}.tgz
+    Download_src; unset src_url_backup
   fi
 
   # pecl_mongodb
   if [ "${pecl_mongodb}" == '1' ]; then
-    echo "Download pecl mongo for php..."
-    src_url=${mirror_link}/src/mongo-${pecl_mongo_ver}.tgz
-    src_url_backup=https://pecl.php.net/get/mongo-${pecl_mongo_ver}.tgz
-    Download_src; unset src_url_backup
     echo "Download pecl mongodb for php..."
     src_url=${mirror_link}/src/mongodb-${pecl_mongodb_ver}.tgz
     src_url_backup=https://pecl.php.net/get/mongodb-${pecl_mongodb_ver}.tgz
     Download_src; unset src_url_backup
-  fi
-
-  # nodejs
-  if [ "${nodejs_flag}" == 'y' ]; then
-    echo "Download Nodejs..."
-    [ "${OUTIP_STATE}"x == "China"x ] && DOWN_ADDR_NODE=https://mirrors.tuna.tsinghua.edu.cn/nodejs-release || DOWN_ADDR_NODE=https://nodejs.org/dist
-    src_url=${DOWN_ADDR_NODE}/v${nodejs_ver}/node-v${nodejs_ver}-linux-${SYS_ARCH_n}.tar.gz && Download_src
   fi
 
   # pureftpd
@@ -871,17 +666,10 @@ checkDownload() {
   # phpMyAdmin
   if [ "${phpmyadmin_flag}" == 'y' ]; then
     echo "Download phpMyAdmin..."
-    if [[ "${php_option}" =~ ^[1-5]$ ]] || [[ "${mphp_ver}" =~ ^70$ ]]; then
-      FILE_NAME=phpMyAdmin-${phpmyadmin_oldver}-all-languages.tar.gz
-      src_url=${mirror_link}/src/${FILE_NAME}
-      src_url_backup=https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_oldver}/${FILE_NAME}
-      Download_src; unset src_url_backup
-    else
-      FILE_NAME=phpMyAdmin-${phpmyadmin_ver}-all-languages.tar.gz
-      src_url=${mirror_link}/src/${FILE_NAME}
-      src_url_backup=https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_ver}/${FILE_NAME}
-      Download_src; unset src_url_backup
-    fi
+    FILE_NAME=phpMyAdmin-${phpmyadmin_ver}-all-languages.tar.gz
+    src_url=${mirror_link}/src/${FILE_NAME}
+    src_url_backup=https://files.phpmyadmin.net/phpMyAdmin/${phpmyadmin_ver}/${FILE_NAME}
+    Download_src; unset src_url_backup
   fi
 
   popd > /dev/null

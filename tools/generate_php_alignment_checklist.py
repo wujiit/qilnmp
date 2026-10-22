@@ -110,6 +110,8 @@ def make_items() -> List[Dict[str, object]]:
         {"cat": "DB", "name": "Redis (server)", "keys": ["redis_ver"], "tpl": "redis-{v}.tar.gz"},
         {"cat": "DB", "name": "Memcached (server)", "keys": ["memcached_ver"], "tpl": "memcached-{v}.tar.gz"},
 
+        {"cat": "PHP Core", "name": "PHP 8.2", "keys": ["php82_ver"], "tpl": "php-{v}.tar.gz"},
+        {"cat": "PHP Core", "name": "PHP 8.3", "keys": ["php83_ver"], "tpl": "php-{v}.tar.gz"},
         {"cat": "PHP Core", "name": "PHP 8.4", "keys": ["php84_ver"], "tpl": "php-{v}.tar.gz"},
         {"cat": "PHP Core", "name": "PHP 8.5", "keys": ["php85_ver"], "tpl": "php-{v}.tar.gz"},
 

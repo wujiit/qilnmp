@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 #
-# Notes: QILNMP for CentOS/RedHat 7+ Debian 9+ and Ubuntu 16+
+# Notes: QILNMP for Rocky/Alma/RHEL 8+ Debian 11+ and Ubuntu 20+ (64-bit)
 #
 # Project home page:
 #       https://oneinstack.com
@@ -83,14 +83,52 @@ else
   kill -9 $$; exit 1;
 fi
 
-# Check OS Version
-if [ ${RHEL_ver} -lt 7 >/dev/null 2>&1 ] || [ ${Debian_ver} -lt 9 >/dev/null 2>&1 ] || [ ${Ubuntu_ver} -lt 16 >/dev/null 2>&1 ]; then
-  echo "${CFAILURE}Does not support this OS, Please install CentOS 7+,Debian 9+,Ubuntu 16+ ${CEND}"
+# Check OS Version - QILNMP requires modern OS for PHP 8.4/8.5 & MySQL 8.0/8.4 (glibc 2.28+, GCC 8+)
+# CentOS 7 (including 7.9), Debian <=10, and Ubuntu <=18 are EOL and lack modern C11/GCC/glibc toolchains
+SUPPORTED_OS=true
+if [ "${Family}" == 'rhel' ]; then
+  if [ -z "${RHEL_ver}" ] || [ "${RHEL_ver}" -lt 8 ]; then
+    SUPPORTED_OS=false
+  fi
+elif [ "${Family}" == 'debian' ]; then
+  if [ -z "${Debian_ver}" ] || [ "${Debian_ver}" -lt 11 ]; then
+    SUPPORTED_OS=false
+  fi
+elif [ "${Family}" == 'ubuntu' ]; then
+  if [ -z "${Ubuntu_ver}" ] || [ "${Ubuntu_ver}" -lt 20 ]; then
+    SUPPORTED_OS=false
+  fi
+fi
+
+if [ "${SUPPORTED_OS}" == 'false' ]; then
+  echo ""
+  echo "${CFAILURE}========================================================================${CEND}"
+  echo "${CFAILURE}[ERROR] Current OS (${Platform} ${VERSION_ID:-unknown}) is NOT supported by QILNMP!${CEND}"
+  echo "${CFAILURE}========================================================================${CEND}"
+  echo "${CWARNING}CentOS 7.x (including CentOS 7.9), Debian <=10, and Ubuntu <=18 are End-Of-Life (EOL).${CEND}"
+  echo "${CWARNING}Their legacy toolchains (GCC 4.8.x, glibc 2.17, OpenSSL 1.0.2) cannot compile modern${CEND}"
+  echo "${CWARNING}PHP (8.4 / 8.5) or run modern MySQL (8.0 / 8.4 GLIBC 2.28+) binaries.${CEND}"
+  echo ""
+  echo "${CSUCCESS}Supported 64-bit operating systems:${CEND}"
+  echo "  - RHEL / Rocky Linux / AlmaLinux / CentOS Stream: 8.x / 9.x"
+  echo "  - Debian: 11 (Bullseye) / 12 (Bookworm) / 13"
+  echo "  - Ubuntu: 20.04 LTS / 22.04 LTS / 24.04 LTS"
+  echo "  - Anolis OS 8+ / OpenCloudOS 8+ / openEuler 22+"
+  echo "${CFAILURE}========================================================================${CEND}"
+  echo ""
   kill -9 $$; exit 1;
 fi
 
-command -v gcc > /dev/null 2>&1 || $PM -y install gcc
-gcc_ver=$(gcc -dumpversion | awk -F. '{print $1}')
+[ "${QILNMP_SKIP_GCC_BOOTSTRAP}" != '1' ] && command -v gcc > /dev/null 2>&1 || true
+if [ "${QILNMP_SKIP_GCC_BOOTSTRAP}" != '1' ] && ! command -v gcc > /dev/null 2>&1; then
+  $PM -y install gcc
+fi
+if command -v gcc > /dev/null 2>&1; then
+  gcc_ver=$(gcc -dumpversion | awk -F. '{print $1}')
+else
+  # Keep security/status tooling side-effect free when gcc is irrelevant.
+  gcc_ver=5
+fi
 
 [ ${gcc_ver} -lt 5 >/dev/null 2>&1 ] && redis_ver=${redis_oldver}
 
@@ -115,11 +153,9 @@ if [ "$(getconf WORD_BIT)" == "32" ] && [ "$(getconf LONG_BIT)" == "64" ]; then
   if [ "${TARGET_ARCH}" == 'aarch64' ]; then
     SYS_ARCH=arm64
     SYS_ARCH_i=aarch64
-    SYS_ARCH_n=arm64
   else
     SYS_ARCH=amd64 #openjdk
     SYS_ARCH_i=x86-64 #ioncube
-    SYS_ARCH_n=x64 #nodejs
   fi
 else
   echo "${CWARNING}32-bit OS are not supported! ${CEND}"

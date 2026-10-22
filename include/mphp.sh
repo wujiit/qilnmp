@@ -22,42 +22,6 @@ Install_MPHP() {
       [ -e "/lib/systemd/system/php-fpm.service" ] && /bin/mv /lib/systemd/system/php-fpm.service{,_bk}
       php_install_dir=${php_install_dir}${mphp_ver}
       case "${mphp_ver}" in
-        70)
-          . include/php-7.0.sh
-          Install_PHP70 2>&1 | tee -a ${oneinstack_dir}/install.log
-          ;;
-        71)
-          . include/php-7.1.sh
-          Install_PHP71 2>&1 | tee -a ${oneinstack_dir}/install.log
-          ;;
-        72)
-          . include/php-7.2.sh
-          Install_PHP72 2>&1 | tee -a ${oneinstack_dir}/install.log
-          ;;
-        73)
-          . include/php-7.3.sh
-          Install_PHP73 2>&1 | tee -a ${oneinstack_dir}/install.log
-          ;;
-        74)
-          . include/php-7.4.sh
-          Install_PHP74 2>&1 | tee -a ${oneinstack_dir}/install.log
-          ;;
-        80)
-          . include/php-8.0.sh
-          Install_PHP80 2>&1 | tee -a ${oneinstack_dir}/install.log
-          ;;
-        81)
-          . include/php-8.1.sh
-          Install_PHP81 2>&1 | tee -a ${oneinstack_dir}/install.log
-          ;;
-        82)
-          . include/php-8.2.sh
-          Install_PHP82 2>&1 | tee -a ${oneinstack_dir}/install.log
-          ;;
-        83)
-          . include/php-8.3.sh
-          Install_PHP83 2>&1 | tee -a ${oneinstack_dir}/install.log
-          ;;
         84)
           . include/php-8.4.sh
           Install_PHP84 2>&1 | tee -a ${oneinstack_dir}/install.log
@@ -67,7 +31,7 @@ Install_MPHP() {
           Install_PHP85 2>&1 | tee -a ${oneinstack_dir}/install.log
           ;;
         *)
-          echo "${CFAILURE}PHP${mphp_ver} is not supported. Available range: 70~85.${CEND}"
+          echo "${CFAILURE}PHP${mphp_ver} is not supported. PHP < 8.4 is discontinued due to critical CVE-2026-109618/109619 vulnerabilities. Available options: 84 or 85.${CEND}"
           [ -e "/lib/systemd/system/php-fpm.service_bk" ] && /bin/mv /lib/systemd/system/php-fpm.service{_bk,}
           return 1
           ;;

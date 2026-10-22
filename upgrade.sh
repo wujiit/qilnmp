@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 #
-# Notes: QILNMP for CentOS/RedHat 7+ Debian 9+ and Ubuntu 16+
+# Notes: QILNMP for Rocky/Alma/RHEL 8+ Debian 11+ and Ubuntu 20+ (64-bit)
 #
 # Project home page:
 #       https://oneinstack.com
@@ -18,7 +18,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
-#       QILNMP for CentOS/RedHat 7+ Debian 9+ and Ubuntu 16+      #
+#   QILNMP for Rocky/Alma/RHEL 8+ Debian 11+ Ubuntu 20+ (64-bit)      #
 #              Upgrade Software versions for QILNMP               #
 #      For more information please visit https://qiling.jingxialai.com #
 #######################################################################
@@ -56,8 +56,6 @@ Show_Help() {
   --nginx        [version]    Upgrade Nginx
   --tengine      [version]    Upgrade Tengine
   --openresty    [version]    Upgrade OpenResty
-  --apache       [version]    Upgrade Apache
-  --tomcat       [version]    Upgrade Tomcat
   --db           [version]    Upgrade MySQL/MariaDB/Percona
   --php          [version]    Upgrade PHP
   --redis        [version]    Upgrade Redis
@@ -69,7 +67,7 @@ Show_Help() {
 }
 
 ARG_NUM=$#
-TEMP=`getopt -o h --long help,nginx:,tengine:,openresty:,apache:,tomcat:,db:,php:,redis:,memcached:,phpmyadmin:,oneinstack,acme.sh -- "$@" 2>/dev/null`
+TEMP=`getopt -o h --long help,nginx:,tengine:,openresty:,db:,php:,redis:,memcached:,phpmyadmin:,oneinstack,acme.sh -- "$@" 2>/dev/null`
 [ $? != 0 ] && echo "${CWARNING}ERROR: unknown argument! ${CEND}" && Show_Help && exit 1
 eval set -- "${TEMP}"
 while :; do
@@ -86,12 +84,6 @@ while :; do
       ;;
     --openresty)
       openresty_flag=y; NEW_openresy_ver=$2; shift 2
-      ;;
-    --apache)
-      apache_flag=y; NEW_apache_ver=$2; shift 2
-      ;;
-    --tomcat)
-      tomcat_flag=y; NEW_tomcat_ver=$2; shift 2
       ;;
     --db)
       db_flag=y; NEW_db_ver=$2; shift 2
@@ -128,21 +120,19 @@ Menu() {
     printf "
 What Are You Doing?
 \t${CMSG} 1${CEND}. Upgrade Nginx/Tengine/OpenResty
-\t${CMSG} 2${CEND}. Upgrade Apache
-\t${CMSG} 3${CEND}. Upgrade Tomcat
-\t${CMSG} 4${CEND}. Upgrade MySQL/MariaDB/Percona
-\t${CMSG} 5${CEND}. Upgrade PHP
-\t${CMSG} 6${CEND}. Upgrade Redis
-\t${CMSG} 7${CEND}. Upgrade Memcached
-\t${CMSG} 8${CEND}. Upgrade phpMyAdmin
-\t${CMSG} 9${CEND}. Upgrade QILNMP latest
-\t${CMSG}10${CEND}. Upgrade acme.sh latest
+\t${CMSG} 2${CEND}. Upgrade MySQL/MariaDB/Percona
+\t${CMSG} 3${CEND}. Upgrade PHP
+\t${CMSG} 4${CEND}. Upgrade Redis
+\t${CMSG} 5${CEND}. Upgrade Memcached
+\t${CMSG} 6${CEND}. Upgrade phpMyAdmin
+\t${CMSG} 7${CEND}. Upgrade QILNMP latest
+\t${CMSG} 8${CEND}. Upgrade acme.sh latest
 \t${CMSG} q${CEND}. Exit
 "
     echo
     read -e -p "Please input the correct option: " Upgrade_flag
-    if [[ ! "${Upgrade_flag}" =~ ^[1-9,q]$|^10$ ]]; then
-      echo "${CWARNING}input error! Please only input 1~10 and q${CEND}"
+    if [[ ! "${Upgrade_flag}" =~ ^[1-8,q]$ ]]; then
+      echo "${CWARNING}input error! Please only input 1~8 and q${CEND}"
     else
       case "${Upgrade_flag}" in
         1)
@@ -151,30 +141,24 @@ What Are You Doing?
           [ -e "${openresty_install_dir}/nginx/sbin/nginx" ] && Upgrade_OpenResty
           ;;
         2)
-          Upgrade_Apache
-          ;;
-        3)
-          Upgrade_Tomcat
-          ;;
-        4)
           Upgrade_DB
           ;;
-        5)
+        3)
           Upgrade_PHP
           ;;
-        6)
+        4)
           Upgrade_Redis
           ;;
-        7)
+        5)
           Upgrade_Memcached
           ;;
-        8)
+        6)
           Upgrade_phpMyAdmin
           ;;
-        9)
+        7)
           Upgrade_QILNMP
           ;;
-        10)
+        8)
           [ -e ~/.acme.sh/acme.sh ] && { ~/.acme.sh/acme.sh --force --upgrade; ~/.acme.sh/acme.sh --version; }
           ;;
         q)
@@ -191,8 +175,6 @@ else
   [ "${nginx_flag}" == 'y' ] && Upgrade_Nginx
   [ "${tengine_flag}" == 'y' ] && Upgrade_Tengine
   [ "${openresty_flag}" == 'y' ] && Upgrade_OpenResty
-  [ "${apache_flag}" == 'y' ] && Upgrade_Apache
-  [ "${tomcat_flag}" == 'y' ] && Upgrade_Tomcat
   [ "${db_flag}" == 'y' ] && Upgrade_DB
   [ "${php_flag}" == 'y' ] && Upgrade_PHP
   [ "${redis_flag}" == 'y' ] && Upgrade_Redis

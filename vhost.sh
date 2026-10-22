@@ -2,7 +2,7 @@
 # Author:  yeho <lj2007331 AT gmail.com>
 # BLOG:  https://linuxeye.com
 #
-# Notes: QILNMP for CentOS/RedHat 7+ Debian 9+ and Ubuntu 16+
+# Notes: QILNMP for Rocky/Alma/RHEL 8+ Debian 11+ and Ubuntu 20+ (64-bit)
 #
 # Project home page:
 #       https://oneinstack.com
@@ -18,7 +18,7 @@ export PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
 clear
 printf "
 #######################################################################
-#       QILNMP for CentOS/RedHat 7+ Debian 9+ and Ubuntu 16+      #
+#   QILNMP for Rocky/Alma/RHEL 8+ Debian 11+ Ubuntu 20+ (64-bit)      #
 #      For more information please visit https://qiling.jingxialai.com #
 #######################################################################
 "
@@ -40,7 +40,7 @@ Show_Help() {
   --help, -h                  Show this help message
   --quiet, -q                 quiet operation
   --list, -l                  List Virtualhost
-  --mphp_ver [70~85]          Use another PHP version (PATH: /usr/local/php${mphp_ver})
+  --mphp_ver [84~85]          Use another PHP version (PATH: /usr/local/php${mphp_ver})
   --proxy                     Use proxy
   --add                       Add Virtualhost
   --delete, --del             Delete Virtualhost
@@ -74,7 +74,7 @@ while :; do
       ;;
     --mphp_ver)
       mphp_ver=$2; mphp_flag=y; shift 2
-      [[ ! "${mphp_ver}" =~ ^7[0-4]$|^8[0-5]$ ]] && { echo "${CWARNING}mphp_ver input error! Please only input number 70~85${CEND}"; unset mphp_ver mphp_flag; }
+      [[ ! "${mphp_ver}" =~ ^8[4-5]$ ]] && { echo "${CWARNING}mphp_ver input error! Please only input 84 or 85 (PHP < 8.4 discontinued for security)${CEND}"; unset mphp_ver mphp_flag; }
       ;;
     --proxy)
       proxy_flag=y; shift 1
@@ -355,37 +355,21 @@ What Are You Doing?
       while :; do echo
         echo 'Please select a version of the PHP:'
         echo -e "\t${CMSG} 0${CEND}. PHP ${PHP_main_ver} (default)"
-        [ -e "/dev/shm/php70-cgi.sock" ] && echo -e "\t${CMSG} 1${CEND}. PHP 7.0"
-        [ -e "/dev/shm/php71-cgi.sock" ] && echo -e "\t${CMSG} 2${CEND}. PHP 7.1"
-        [ -e "/dev/shm/php72-cgi.sock" ] && echo -e "\t${CMSG} 3${CEND}. PHP 7.2"
-        [ -e "/dev/shm/php73-cgi.sock" ] && echo -e "\t${CMSG} 4${CEND}. PHP 7.3"
-        [ -e "/dev/shm/php74-cgi.sock" ] && echo -e "\t${CMSG} 5${CEND}. PHP 7.4"
-        [ -e "/dev/shm/php80-cgi.sock" ] && echo -e "\t${CMSG} 6${CEND}. PHP 8.0"
-        [ -e "/dev/shm/php81-cgi.sock" ] && echo -e "\t${CMSG} 7${CEND}. PHP 8.1"
-        [ -e "/dev/shm/php82-cgi.sock" ] && echo -e "\t${CMSG} 8${CEND}. PHP 8.2"
-        [ -e "/dev/shm/php83-cgi.sock" ] && echo -e "\t${CMSG} 9${CEND}. PHP 8.3"
-        [ -e "/dev/shm/php84-cgi.sock" ] && echo -e "\t${CMSG}10${CEND}. PHP 8.4"
-        [ -e "/dev/shm/php85-cgi.sock" ] && echo -e "\t${CMSG}11${CEND}. PHP 8.5"
+        [ -e "/dev/shm/php84-cgi.sock" ] && echo -e "\t${CMSG} 1${CEND}. PHP 8.4"
+        [ -e "/dev/shm/php85-cgi.sock" ] && echo -e "\t${CMSG} 2${CEND}. PHP 8.5"
         read -e -p "Please input a number:(Default 0 press Enter) " php_option
         php_option=${php_option:-0}
-        if [[ ! ${php_option} =~ ^[0-9]$|^1[0-1]$ ]]; then
-          echo "${CWARNING}input error! Please only input number 0~11${CEND}"
+        if [[ ! ${php_option} =~ ^[0-2]$|^1[0-1]$ ]]; then
+          echo "${CWARNING}input error! Please only input number 0~2${CEND}"
         else
           break
         fi
       done
     fi
-    [ "${php_option}" == '1' ] && mphp_ver=70
-    [ "${php_option}" == '2' ] && mphp_ver=71
-    [ "${php_option}" == '3' ] && mphp_ver=72
-    [ "${php_option}" == '4' ] && mphp_ver=73
-    [ "${php_option}" == '5' ] && mphp_ver=74
-    [ "${php_option}" == '6' ] && mphp_ver=80
-    [ "${php_option}" == '7' ] && mphp_ver=81
-    [ "${php_option}" == '8' ] && mphp_ver=82
-    [ "${php_option}" == '9' ] && mphp_ver=83
-    [ "${php_option}" == '10' ] && mphp_ver=84
-    [ "${php_option}" == '11' ] && mphp_ver=85
+    case "${php_option}" in
+      1|10) mphp_ver=84 ;;
+      2|11) mphp_ver=85 ;;
+    esac
     [ ! -e "/dev/shm/php${mphp_ver}-cgi.sock" ] && unset mphp_ver
   fi
 

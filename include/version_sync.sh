@@ -21,7 +21,7 @@ Is_php_related_version_key() {
     mysql55_ver|mysql56_ver|mysql57_ver|mysql80_ver|mysql82_ver|mysql84_ver|mysql90_ver|mysql91_ver|\
     mariadb55_ver|mariadb1011_ver|mariadb105_ver|mariadb104_ver|mariadb106_ver|mariadb114_ver|mariadb118_ver|\
     redis_ver|memcached_ver|jemalloc_ver|pureftpd_ver|\
-    php72_ver|php73_ver|php74_ver|php80_ver|php81_ver|php82_ver|php83_ver|php84_ver|php85_ver|\
+    php84_ver|php85_ver|\
     openssl_ver|openssl11_ver|openssl3_ver|\
     libiconv_ver|curl_ver|libmcrypt_ver|mcrypt_ver|mhash_ver|freetype_ver|\
     argon2_ver|libsodium_ver|libsodium_up_ver|zlib_ver|libzip_ver|libxml2_ver|icu4c_ver|\
@@ -241,26 +241,6 @@ Ensure_mirror_compatible_core_versions() {
       boost_percona_ver=${latest_ver}
       let "adjusted_count++"
       echo "${CWARNING}Mirror does not provide boost_${old_ver//./_}.tar.gz, auto-adjust boost_percona_ver=${boost_percona_ver}${CEND}"
-    fi
-  fi
-
-  if ! grep -Fxq "php-${php82_ver}.tar.gz" "${resource_file}"; then
-    latest_ver=$(grep -E '^php-8\.2\.[0-9]+\.tar\.gz$' "${resource_file}" | sed -E 's/^php-(8\.2\.[0-9]+)\.tar\.gz$/\1/' | sort -V | tail -1)
-    if [ -n "${latest_ver}" ]; then
-      old_ver=${php82_ver}
-      php82_ver=${latest_ver}
-      let "adjusted_count++"
-      echo "${CWARNING}Mirror does not provide php-${old_ver}.tar.gz, auto-adjust php82_ver=${php82_ver}${CEND}"
-    fi
-  fi
-
-  if ! grep -Fxq "php-${php83_ver}.tar.gz" "${resource_file}"; then
-    latest_ver=$(grep -E '^php-8\.3\.[0-9]+\.tar\.gz$' "${resource_file}" | sed -E 's/^php-(8\.3\.[0-9]+)\.tar\.gz$/\1/' | sort -V | tail -1)
-    if [ -n "${latest_ver}" ]; then
-      old_ver=${php83_ver}
-      php83_ver=${latest_ver}
-      let "adjusted_count++"
-      echo "${CWARNING}Mirror does not provide php-${old_ver}.tar.gz, auto-adjust php83_ver=${php83_ver}${CEND}"
     fi
   fi
 

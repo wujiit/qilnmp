@@ -109,7 +109,7 @@ installDepsDebian() {
   # Install needed packages
   local pkgList=""
   case "${Debian_ver}" in
-    9|10|11|12)
+    11|12|13)
       pkgList="debian-keyring debian-archive-keyring build-essential pkg-config gcc g++ make cmake autoconf libjpeg-dev|libjpeg62-turbo-dev|libjpeg8-dev libpng-dev libgd-dev libxml2 libxml2-dev zlib1g zlib1g-dev libc6 libc6-dev libc-client2007e-dev libglib2.0-0 libglib2.0-dev bzip2 libzip-dev libbz2-1.0 libncurses6|libncurses5 libncurses-dev|libncurses5-dev libaio1|libaio1t64 libaio-dev|libaio-devt64 numactl libreadline-dev curl libcurl4-openssl-dev|libcurl4-gnutls-dev e2fsprogs libkrb5-3 libkrb5-dev libltdl-dev libidn2-0|libidn11 libidn2-dev|libidn11-dev openssl net-tools libssl-dev libtool libevent-dev bison re2c libsasl2-dev libxslt1-dev libicu-dev libargon2-1|libargon2-0 libargon2-dev libsodium23|libsodium24 libsodium-dev locales patch vim zip unzip tmux htop bc dc expect libexpat1-dev libonig-dev libtirpc-dev rsync git lsof lrzsz rsyslog cron logrotate chrony libsqlite3-dev psmisc wget ca-certificates software-properties-common gnupg ufw python3 xz-utils libperl-dev|perl libipc-cmd-perl|perl-modules|perl"
       ;;
     *)
