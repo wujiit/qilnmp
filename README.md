@@ -13,7 +13,7 @@
 [![MariaDB](https://img.shields.io/badge/MariaDB-10.11%20%7C%2011.4%20LTS-C0765A.svg?logo=mariadb&logoColor=white)](https://mariadb.org)
 [![License](https://img.shields.io/badge/License-Apache--2.0-orange.svg)](https://github.com/wujiit/qilnmp/blob/master/LICENSE)
 
-[官方网站](https://qiling.jingxialai.com) · [官方软件源导航](https://qiling.jingxialai.com/docs/sources.html) · [提交反馈 / Issue](https://github.com/wujiit/qilnmp/issues)
+[官方网站](https://qiling.jingxialai.com/qilnmp) · [官方软件源导航](https://qiling.jingxialai.com/qilnmp/docs/sources.html) · [提交反馈 / Issue](https://github.com/wujiit/qilnmp/issues)
 
 </div>
 
@@ -50,7 +50,7 @@
 - **上游原始作者**：yeho `<lj2007331 AT gmail.com>`
 - **上游原始仓库**：[oneinstack/oneinstack](https://github.com/oneinstack/oneinstack)
 - **分支维护者**：summer `<iticu@qq.com>`
-- **官方网站**：[https://qiling.jingxialai.com](https://qiling.jingxialai.com)
+- **官方网站**：[https://qiling.jingxialai.com/qilnmp](https://qiling.jingxialai.com/qilnmp)
 - **代码仓库**：[https://github.com/wujiit/qilnmp](https://github.com/wujiit/qilnmp)
 - **开源许可证**：[Apache-2.0](https://github.com/wujiit/qilnmp/blob/master/LICENSE)
 
@@ -58,18 +58,20 @@
 
 ## 对比原版 OneinStack 的调整与精简
 
-QILNMP 是基于 OneinStack 进行精简与现代版本适配的维护分支，主要做了以下减法与针对性调整：
+QILNMP 是基于 OneinStack 进行精简与现代版本适配的维护分支，主要做了以下服务减法与针对性新增强化：
 
-### 1. 移除的服务与环境
-- **移除 Apache (httpd) 与 LAMP 栈**：不再提供 Apache 编译与配置，Web 服务专注于高性能 Nginx（支持 Nginx、Tengine、OpenResty、Caddy）；
+### 1. 移除与精简的服务
+- **移除 Apache (httpd) 与 LAMP 栈**：不再提供 Apache 编译与运行配置，Web 服务专注于高性能 Nginx 架构（支持 Nginx、Tengine、OpenResty、Caddy）；
 - **移除 Tomcat 与 Java/JDK 运行时**：剔除 Tomcat 7/8/9/10 及 Adoptium/OpenJDK 等 Java 运行环境，大幅精简脚本体积与复杂度；
-- **清退 PHP 8.4 以下所有已停服旧版本**：全面移除了 PHP 5.3 ~ 8.3 全系版本（避免历史高危漏洞与 php2shell RCE 风险），当前仅支持并锁定修补后的 `PHP 8.4.27` 与 `PHP 8.5.12`；
-- **清理已淘汰的陈旧扩展**：删除了 ZendGuardLoader、eAccelerator、mcrypt 等古董扩展与老补丁，保留现代生产常用扩展（imagick、redis、memcached、swoole 等）。
+- **清退 PHP 8.4 以下所有已停服旧版本**：全面移除了 PHP 5.3 ~ 8.3 全系版本（避免历史高危漏洞与 php2shell 严重 RCE 风险），当前仅支持并锁定修补后的 `PHP 8.4.27` 与 `PHP 8.5.12`；
+- **清理已淘汰的陈旧扩展**：删除了 ZendGuardLoader、eAccelerator、mcrypt 等古董扩展与陈旧补丁。
 
-### 2. 优化与调整的功能
+### 2. 新增与强化的专属服务
+- **新增 `wordpress.sh` 一键极速建站服务**：针对主流 WordPress 与 WooCommerce 跨境电商量身定制，自动化完成站点目录构建、自动建库、生成高强度 `wp-config.php`、配置专属 Nginx 伪静态与 Opcache 深度调优，支持 Let's Encrypt 证书自动申领与商业 SSL 证书一键导入；
+- **新增 `security.sh` 专属安全防护与防 CC 模块**：专为 Nginx 架构设计单 IP 限频（15r/s，突发 30）保护，并联动 Fail2ban 自动监控访问日志（`/data/wwwlogs/*nginx.log`），实时将频繁恶意扫描与高频 CC 攻击 IP 送入系统防火墙自动封禁；
+- **新增硬件智能感知与动态调优（`memory.sh`）**：在 1C2G、2C4G 等轻量服务器上自动检测并创建 3GB Swap，防止编译 MySQL / OpenSSL 时因内存耗尽被 Linux OOM 杀进程，并动态自适应分配 PHP-FPM 工作进程树、OPcache 与 MySQL 缓冲池大小；
 - **纯离线部署就地编译**：只要将所需源码压缩包放入本地 `src/` 目录，安装脚本会自动识别并跳过网络下载，完全不产生外部网络请求；
-- **服务器硬件自适应优化**：自动检测硬件配置，在 1C2G、2C4G 等轻量服务器上自动配置 3GB Swap 防止编译 OOM，并自动优化 PHP-FPM 进程数、OPcache 与 MySQL 缓冲池大小；
-- **编译依赖与组件升级**：Nginx 升级至 1.30.6，底层编译链升级至 OpenSSL 3.5.9 LTS，数据库支持 MySQL 8.0/9.0 及 MariaDB 10.11/11.4 LTS。
+- **核心组件基线现代化升级**：Nginx 升级至 1.30.6，底层编译链升级至 OpenSSL 3.5.9 LTS，数据库支持 MySQL 8.0/9.0 及 MariaDB 10.11/11.4 LTS。
 
 ---
 
@@ -192,7 +194,7 @@ chmod +x *.sh
 ./install.sh
 ```
 
-*各组件官方纯净源码直链与标准归档命名规范详见：* **[docs/sources.html](https://qiling.jingxialai.com/docs/sources.html)**
+*各组件官方纯净源码直链与标准归档命名规范详见：* **[docs/sources.html](https://qiling.jingxialai.com/qilnmp/docs/sources.html)**
 
 ### 2. 自建私有局域网镜像源（团队多机推荐）
 团队内部若管理多台服务器，强烈推荐使用开源镜像系统 **[MirrorOne (dalao-org/MirrorOne)](https://github.com/dalao-org/MirrorOne)** 在内网或专网搭建专属镜像站。在 `options.conf` 中配置主镜像直链：
@@ -419,7 +421,7 @@ ss -lntp | grep -E ':80|:443|:3306|:6379|:9000'
 ### Q1：离线部署时，MySQL 官方安装包需要提前放入 `src/` 吗？
 > **答：** MySQL 8.0 官方二进制免编译安装包体积约 850MB，为保持 GitHub 代码仓库极致轻量，该包不预置在仓库中。
 > - 若服务器可访问公网：安装脚本在执行到数据库步骤时会自动从官方直链高速下载；
-> - 若服务器纯内网完全断网：建议在外网电脑从 [官方源导航](https://qiling.jingxialai.com/docs/sources.html) 下载 `mysql-8.0.44-linux-glibc2.28-x86_64.tar.xz`，提前放入 `qilnmp/src/` 目录中即可。
+> - 若服务器纯内网完全断网：建议在外网电脑从 [官方源导航](https://qiling.jingxialai.com/qilnmp/docs/sources.html) 下载 `mysql-8.0.44-linux-glibc2.28-x86_64.tar.xz`，提前放入 `qilnmp/src/` 目录中即可。
 
 ### Q2：跨大版本升级 PHP（如 8.4 升级到 8.5）可以直接用 `upgrade.sh` 吗？
 > **答：不能。** 跨大版本的 Zend API 内部数据结构存在重大破坏性变更，强行原地替换会导致旧扩展（如 imagick、redis）发生段错误崩溃。
@@ -439,7 +441,8 @@ ss -lntp | grep -E ':80|:443|:3306|:6379|:9000'
 - **WordPress 站长技术交流群**：`16966111`
 - **WooCommerce 跨境电商交流群**：`580246438`
 - **灵简 AI 研发交流群**：`591117073`
-- **灵简软件支持群**：`200766709`
+- **启灵件技术支持群**：`200766709`
+- **维护者个人 QQ / 微信**：`19577566`
 - **技术支持与商务联系邮箱**：`iticu@qq.com`
 
 ---
