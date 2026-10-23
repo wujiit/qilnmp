@@ -119,6 +119,7 @@ do
   # while read Line
   do
     #[ -z "`echo $IP | grep -E '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|CNS'`" ] && continue
+    [ -e "../include/ois.${ARCH}" ] && [ ! -x "../include/ois.${ARCH}" ] && chmod +x "../include/ois.${ARCH}" >/dev/null 2>&1
     if [ "$(../include/ois.${ARCH} conn_port --host ${IP} --port ${PORT})" == "false" ]; then
       [ ! -e ipnologin.txt ] && > ipnologin.txt
       [ -z "`grep $IP ipnologin.txt | grep $(date +%F)`" ] && echo "`date +%F_%H%M` $IP" >> ipnologin.txt
@@ -160,7 +161,7 @@ do
     PWcode=$(echo "ibase=16;$(echo "$PASSWD_USE" | xxd -ps -u)"|bc|tr -d '\\'|tr -d '\n')
     Othercode=$(echo "ibase=16;$(echo "$OTHERS" | xxd -ps -u)"|bc|tr -d '\\'|tr -d '\n')
     #echo $IPcode $Portcode $USER $PWcode $CONFIG_FILE $SSHTIMEOUT $SCPTIMEOUT $BWLIMIT $Othercode
-    ./thread.sh $IPcode $Portcode $USER $PWcode $CONFIG_FILE $SSHTIMEOUT $SCPTIMEOUT $BWLIMIT $Othercode | tee logs/$IP.log &
+    bash ./thread.sh $IPcode $Portcode $USER $PWcode $CONFIG_FILE $SSHTIMEOUT $SCPTIMEOUT $BWLIMIT $Othercode | tee logs/$IP.log &
   done < $IPLIST.tmp
   sleep 3
   IP_init=$(expr $IP_init + 50)

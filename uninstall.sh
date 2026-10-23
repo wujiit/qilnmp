@@ -36,10 +36,10 @@ pushd ${oneinstack_dir} > /dev/null
 Show_Help() {
   echo
   echo "Usage: $0  command ...[parameters]....
-  --help, -h                    Show this help message, More: https://qiling.jingxialai.com
+  --help, -h                    Show this help message, More: https://qiling.jingxialai.com/qilnmp
   --quiet, -q                   quiet operation
   --all                         Uninstall All
-  --web                         Uninstall Nginx/Tengine/OpenResty/Apache/Tomcat/Caddy
+  --web                         Uninstall Nginx/Tengine/OpenResty/Caddy
   --mysql                       Uninstall MySQL/MariaDB/Percona
   --postgresql                  Uninstall PostgreSQL
   --mongodb                     Uninstall MongoDB

@@ -839,7 +839,7 @@ install_acme_if_needed() {
   Download_src
   tar xzf acme.sh-master.tar.gz >/dev/null 2>&1 || fail "Extract acme.sh failed"
   pushd acme.sh-master > /dev/null || exit 1
-  ./acme.sh --install >/dev/null 2>&1 || fail "Install acme.sh failed"
+  bash ./acme.sh --install >/dev/null 2>&1 || fail "Install acme.sh failed"
   popd > /dev/null || exit 1
   popd > /dev/null || exit 1
   unset src_url src_url_backup

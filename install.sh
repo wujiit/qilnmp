@@ -54,7 +54,7 @@ version() {
 Show_Help() {
   version
   echo "Usage: $0  command ...[parameters]....
-  --help, -h                  Show this help message, More: https://qiling.jingxialai.com/
+  --help, -h                  Show this help message, More: https://qiling.jingxialai.com/qilnmp
   --version, -v               Show version info
   --nginx_option [1-4]        Install Web server (1: Nginx, 2: Tengine, 3: OpenResty, 4: Caddy)
   --php_option [1-2]          Install PHP version (1=PHP8.4.27, 2=PHP8.5.12)
@@ -264,9 +264,19 @@ done
 
 # Check md5sum
 if [ ${ARG_NUM} == 0 ] && [ ! -e ~/.oneinstack ]; then
-  # Check md5sum
-  while :; do echo
-    read -e -p "Do you want to check md5sum? [y/n]: " md5sum_flag
+  oneinstack_file=${oneinstack_dir}.tar.gz
+  echo -e "\n${CMSG}------------------------ MD5 校验提示 ------------------------${CEND}"
+  if [ -e "${oneinstack_file}" ]; then
+    echo -e "• 检测到本地安装包 [${oneinstack_file##*/}]，推荐输入 [${CMSG}y${CEND}] 校验包完整性防篡改。"
+    md5_recommend='y'
+  else
+    echo -e "• 未检测到本地压缩包（如通过 git clone 获取），请直接输入 [${CWARNING}n${CEND}] 跳过校验。"
+    md5_recommend='n'
+  fi
+  echo -e "${CMSG}--------------------------------------------------------------${CEND}"
+  while :; do
+    read -e -p "Do you want to check md5sum? [y/n](Default: ${md5_recommend}): " md5sum_flag
+    md5sum_flag=${md5sum_flag:-${md5_recommend}}
     if [[ ! ${md5sum_flag} =~ ^[y,n]$ ]]; then
       echo "${CWARNING}input error! Please only input 'y' or 'n'${CEND}"
     else
@@ -1001,6 +1011,9 @@ fi
 # reload php
 [ -e "${php_install_dir}/sbin/php-fpm" ] && { [ -e "/bin/systemctl" ] && systemctl reload php-fpm || service php-fpm reload; }
 [ -n "${mphp_ver}" -a -e "${php_install_dir}${mphp_ver}/sbin/php-fpm" ] && { [ -e "/bin/systemctl" ] && systemctl reload php${mphp_ver}-fpm || service php${mphp_ver}-fpm reload; }
+
+# set execution permissions for scripts
+[ -d "${oneinstack_dir}/tools" ] && chmod +x ${oneinstack_dir}/*.sh ${oneinstack_dir}/tools/*.sh ${oneinstack_dir}/tools/*.exp > /dev/null 2>&1
 
 endTime=`date +%s`
 ((installTime=($endTime-$startTime)/60))

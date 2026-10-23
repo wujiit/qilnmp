@@ -205,6 +205,240 @@ Get_custom_src_url() {
   return 0
 }
 
+Get_builtin_official_url() {
+  local file_name=$1
+  local ver=""
+  local tag=""
+  local major_minor=""
+
+  case "${file_name}" in
+    icu4c-*-src.tgz)
+      ver=${file_name#icu4c-}
+      ver=${ver%-src.tgz}
+      tag=${ver//_/-}
+      echo "https://github.com/unicode-org/icu/releases/download/release-${tag}/${file_name}"
+      return 0
+      ;;
+    jemalloc-*.tar.bz2)
+      ver=${file_name#jemalloc-}
+      ver=${ver%.tar.bz2}
+      echo "https://github.com/jemalloc/jemalloc/releases/download/${ver}/${file_name}"
+      return 0
+      ;;
+    pcre-*.tar.gz)
+      ver=${file_name#pcre-}
+      ver=${ver%.tar.gz}
+      echo "https://downloads.sourceforge.net/project/pcre/pcre/${ver}/${file_name}"
+      return 0
+      ;;
+    nginx-*.tar.gz)
+      echo "https://nginx.org/download/${file_name}"
+      return 0
+      ;;
+    tengine-*.tar.gz)
+      echo "https://tengine.taobao.org/download/${file_name}"
+      return 0
+      ;;
+    openresty-*.tar.gz)
+      echo "https://openresty.org/download/${file_name}"
+      return 0
+      ;;
+    php-*.tar.gz)
+      echo "https://www.php.net/distributions/${file_name}"
+      return 0
+      ;;
+    openssl-*.tar.gz)
+      ver=${file_name#openssl-}
+      ver=${ver%.tar.gz}
+      if [[ "${ver}" =~ ^1\. ]]; then
+        tag=${ver//./_}
+        echo "https://github.com/openssl/openssl/releases/download/OpenSSL_${tag}/${file_name}"
+      else
+        echo "https://github.com/openssl/openssl/releases/download/openssl-${ver}/${file_name}"
+      fi
+      return 0
+      ;;
+    cacert.pem)
+      echo "https://curl.se/ca/cacert.pem"
+      return 0
+      ;;
+    curl-*.tar.gz)
+      echo "https://curl.se/download/${file_name}"
+      return 0
+      ;;
+    libiconv-*.tar.gz)
+      echo "https://ftp.gnu.org/pub/gnu/libiconv/${file_name}"
+      return 0
+      ;;
+    mhash-*.tar.gz)
+      ver=${file_name#mhash-}
+      ver=${ver%.tar.gz}
+      echo "https://downloads.sourceforge.net/project/mhash/mhash/${ver}/${file_name}"
+      return 0
+      ;;
+    freetype-*.tar.gz)
+      echo "https://download.savannah.gnu.org/releases/freetype/${file_name}"
+      return 0
+      ;;
+    argon2-*.tar.gz)
+      ver=${file_name#argon2-}
+      ver=${ver%.tar.gz}
+      echo "https://github.com/P-H-C/phc-winner-argon2/archive/refs/tags/${ver}.tar.gz"
+      return 0
+      ;;
+    libsodium-*.tar.gz)
+      echo "https://download.libsodium.org/libsodium/releases/${file_name}"
+      return 0
+      ;;
+    libzip-*.tar.gz)
+      echo "https://libzip.org/download/${file_name}"
+      return 0
+      ;;
+    libxml2-*.tar.xz)
+      ver=${file_name#libxml2-}
+      ver=${ver%.tar.xz}
+      major_minor=${ver%.*}
+      echo "https://download.gnome.org/sources/libxml2/${major_minor}/${file_name}"
+      return 0
+      ;;
+    zlib-*.tar.gz)
+      echo "https://zlib.net/fossils/${file_name}"
+      return 0
+      ;;
+    redis-*.tar.gz)
+      echo "http://download.redis.io/releases/${file_name}"
+      return 0
+      ;;
+    memcached-*.tar.gz)
+      echo "http://www.memcached.org/files/${file_name}"
+      return 0
+      ;;
+    libmemcached-*.tar.gz)
+      ver=${file_name#libmemcached-}
+      ver=${ver%.tar.gz}
+      echo "https://launchpad.net/libmemcached/1.0/${ver}/+download/${file_name}"
+      return 0
+      ;;
+    pure-ftpd-*.tar.gz)
+      echo "https://download.pureftpd.org/pub/pure-ftpd/releases/${file_name}"
+      return 0
+      ;;
+    phpMyAdmin-*-all-languages.tar.gz)
+      ver=${file_name#phpMyAdmin-}
+      ver=${ver%-all-languages.tar.gz}
+      echo "https://files.phpmyadmin.net/phpMyAdmin/${ver}/${file_name}"
+      return 0
+      ;;
+    ImageMagick-*.tar.gz)
+      echo "https://imagemagick.org/archive/${file_name}"
+      return 0
+      ;;
+    GraphicsMagick-*.tar.gz)
+      ver=${file_name#GraphicsMagick-}
+      ver=${ver%.tar.gz}
+      echo "https://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/${ver}/${file_name}"
+      return 0
+      ;;
+    boost_*.tar.gz)
+      ver=${file_name#boost_}
+      ver=${ver%.tar.gz}
+      tag=${ver//_/.}
+      echo "https://downloads.sourceforge.net/project/boost/boost/${tag}/${file_name}"
+      return 0
+      ;;
+    caddy_*.tar.gz|caddy-*.tar.gz)
+      ver=${file_name#caddy-}
+      ver=${ver%.tar.gz}
+      echo "https://github.com/caddyserver/caddy/releases/download/v${ver}/caddy_${ver}_linux_${ARCH:-amd64}.tar.gz"
+      return 0
+      ;;
+    nghttp2-*.tar.gz)
+      ver=${file_name#nghttp2-}
+      ver=${ver%.tar.gz}
+      echo "https://github.com/nghttp2/nghttp2/releases/download/v${ver}/${file_name}"
+      return 0
+      ;;
+    webgrind-*.zip)
+      echo "https://github.com/jokkedk/webgrind/archive/refs/heads/master.zip"
+      return 0
+      ;;
+    acme.sh-*.tar.gz)
+      echo "https://github.com/acmesh-official/acme.sh/archive/refs/heads/master.tar.gz"
+      return 0
+      ;;
+    mariadb-*-linux-systemd-x86_64.tar.gz)
+      ver=${file_name#mariadb-}
+      ver=${ver%-linux-systemd-x86_64.tar.gz}
+      echo "https://archive.mariadb.org/mariadb-${ver}/bintar-linux-systemd-x86_64/${file_name}"
+      return 0
+      ;;
+    mariadb-*.tar.gz)
+      ver=${file_name#mariadb-}
+      ver=${ver%.tar.gz}
+      echo "https://archive.mariadb.org/mariadb-${ver}/source/${file_name}"
+      return 0
+      ;;
+    mysql-*-linux-glibc*.tar.xz|mysql-*-linux-glibc*.tar.gz|mysql-*.tar.gz)
+      echo "https://downloads.mysql.com/archives/get/p/23/file/${file_name}"
+      return 0
+      ;;
+    wordpress-*.tar.gz)
+      echo "https://wordpress.org/${file_name}"
+      return 0
+      ;;
+    httpd-*.tar.gz)
+      echo "https://archive.apache.org/dist/httpd/${file_name}"
+      return 0
+      ;;
+    apr-*.tar.gz)
+      echo "https://archive.apache.org/dist/apr/${file_name}"
+      return 0
+      ;;
+    apr-util-*.tar.gz)
+      echo "https://archive.apache.org/dist/apr/${file_name}"
+      return 0
+      ;;
+    apache-tomcat-*.tar.gz)
+      ver=${file_name#apache-tomcat-}
+      ver=${ver%.tar.gz}
+      local major=${ver%%.*}
+      echo "https://archive.apache.org/dist/tomcat/tomcat-${major}/v${ver}/bin/${file_name}"
+      return 0
+      ;;
+    lua-nginx-module-*.tar.gz)
+      ver=${file_name#lua-nginx-module-}
+      ver=${ver%.tar.gz}
+      echo "https://github.com/openresty/lua-nginx-module/archive/refs/tags/v${ver}.tar.gz"
+      return 0
+      ;;
+    luajit2-*.tar.gz)
+      ver=${file_name#luajit2-}
+      ver=${ver%.tar.gz}
+      echo "https://github.com/openresty/luajit2/archive/refs/tags/v${ver}.tar.gz"
+      return 0
+      ;;
+    lua-resty-core-*.tar.gz)
+      ver=${file_name#lua-resty-core-}
+      ver=${ver%.tar.gz}
+      echo "https://github.com/openresty/lua-resty-core/archive/refs/tags/v${ver}.tar.gz"
+      return 0
+      ;;
+    lua-resty-lrucache-*.tar.gz)
+      ver=${file_name#lua-resty-lrucache-}
+      ver=${ver%.tar.gz}
+      echo "https://github.com/openresty/lua-resty-lrucache/archive/refs/tags/v${ver}.tar.gz"
+      return 0
+      ;;
+    *.tgz)
+      # PECL extensions
+      echo "https://pecl.php.net/get/${file_name}"
+      return 0
+      ;;
+  esac
+
+  return 1
+}
+
 Download_src() {
   local file_name=${src_url##*/}
   local try_dl_count=0
@@ -212,6 +446,7 @@ Download_src() {
   local dl_url=""
   local fallback_mirror_url=""
   local redirects_fallback_url=""
+  local builtin_official_url=""
   local custom_url=""
 
   while true; do
@@ -305,6 +540,26 @@ Download_src() {
         fi
       fi
     fi
+    if [ ! -s "${file_name}" ] || ! Check_download_file "${file_name}"; then
+      builtin_official_url=$(Get_builtin_official_url "${file_name}")
+      if [ -n "${builtin_official_url}" ] \
+        && [ "${builtin_official_url}" != "${src_url}" ] \
+        && [ "${builtin_official_url}" != "${src_url_backup}" ] \
+        && [ "${builtin_official_url}" != "${redirects_fallback_url}" ]; then
+        echo "${CWARNING}Mirror URL failed, trying built-in official upstream URL: ${builtin_official_url}${CEND}"
+        [ -e "${file_name}" ] && rm -f "${file_name}"
+        dl_url="${builtin_official_url}"
+        wget --limit-rate=100M --tries=6 -c --no-check-certificate -O "${file_name}" "${dl_url}"
+        if [ ! -s "${file_name}" ] || ! Check_download_file "${file_name}"; then
+          [ -e "${file_name}" ] && rm -f "${file_name}"
+          if [ -e "/usr/local/curl/bin/curl" ]; then
+            /usr/local/curl/bin/curl -L -C - --insecure --retry 6 -o "${file_name}" "${dl_url}"
+          elif command -v curl >/dev/null 2>&1; then
+            curl -L -C - --insecure --retry 6 -o "${file_name}" "${dl_url}"
+          fi
+        fi
+      fi
+    fi
     sleep 1
 
     if [ -s "${file_name}" ] && Check_download_file "${file_name}"; then
@@ -317,7 +572,20 @@ Download_src() {
   done
 
   if [ ! -s "${file_name}" ] || ! Check_download_file "${file_name}"; then
-    echo "${CFAILURE}Auto download failed or file is corrupted: ${file_name}. You can manually download ${src_url} into the src directory.${CEND}"
+    local official_url=$(Get_builtin_official_url "${file_name}" 2>/dev/null)
+    echo
+    echo "${CFAILURE}#########################################################################${CEND}"
+    echo "${CFAILURE}Error: Auto download failed or file is corrupted: ${file_name}${CEND}"
+    echo "${CWARNING}Both configured mirror and official fallback sources failed or timed out.${CEND}"
+    echo
+    echo "${CMSG}You can manually download this package from:${CEND}"
+    [ -n "${official_url}" ] && echo "  - Official Upstream : ${CMSG}${official_url}${CEND}"
+    [ -n "${src_url_backup}" ] && [ "${src_url_backup}" != "${official_url}" ] && echo "  - Backup Source     : ${CMSG}${src_url_backup}${CEND}"
+    echo "  - Configured Mirror : ${CMSG}${src_url}${CEND}"
+    echo
+    echo "${CMSG}Then upload '${file_name}' into: ${oneinstack_dir}/src/${file_name} and rerun ./install.sh${CEND}"
+    echo "${CFAILURE}#########################################################################${CEND}"
+    echo
     kill -9 $$; exit 1;
   fi
 }

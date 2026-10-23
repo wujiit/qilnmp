@@ -264,7 +264,9 @@ Ensure_mirror_compatible_core_versions() {
     fi
   fi
 
-  if [ -n "${mariadb114_ver}" ] && ! grep -Fxq "mariadb-${mariadb114_ver}.tar.gz" "${resource_file}"; then
+  if [ -f "${oneinstack_dir}/src/mariadb-${mariadb114_ver}-linux-systemd-x86_64.tar.gz" ] || [ -f "${oneinstack_dir}/src/mariadb-${mariadb114_ver}.tar.gz" ]; then
+    :
+  elif [ -n "${mariadb114_ver}" ] && ! grep -Fxq "mariadb-${mariadb114_ver}.tar.gz" "${resource_file}"; then
     latest_ver=$(grep -E '^mariadb-11\.4\.[0-9]+\.tar\.gz$' "${resource_file}" | sed -E 's/^mariadb-(11\.4\.[0-9]+)\.tar\.gz$/\1/' | sort -V | tail -1)
     if [ -n "${latest_ver}" ]; then
       old_ver=${mariadb114_ver}

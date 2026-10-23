@@ -17,5 +17,19 @@
 declare -F Install_MariaDB_Generic >/dev/null 2>&1 || . include/mariadb-common.sh
 
 Install_MariaDB114() {
-  Install_MariaDB_Generic "${mariadb114_ver}" "n"
+  local target_ver="${mariadb114_ver}"
+  local detected_ver=""
+
+  if [ -d "${oneinstack_dir}/src" ]; then
+    pushd "${oneinstack_dir}/src" >/dev/null 2>&1
+    if [ "${dbinstallmethod}" == "1" ]; then
+      detected_ver=$(ls mariadb-11.4.*-linux-systemd-x86_64.tar.gz 2>/dev/null | sort -V | tail -1 | sed -E 's/.*mariadb-(11\.4\.[0-9]+)-linux-systemd-x86_64\.tar\.gz$/\1/')
+    elif [ "${dbinstallmethod}" == "2" ]; then
+      detected_ver=$(ls mariadb-11.4.*.tar.gz 2>/dev/null | grep -v 'linux-systemd' | sort -V | tail -1 | sed -E 's/.*mariadb-(11\.4\.[0-9]+)\.tar\.gz$/\1/')
+    fi
+    popd >/dev/null 2>&1
+    [ -n "${detected_ver}" ] && target_ver="${detected_ver}"
+  fi
+
+  Install_MariaDB_Generic "${target_ver}" "n"
 }

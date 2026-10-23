@@ -12,7 +12,9 @@ checkDownload() {
   # icu
   if ! command -v icu-config >/dev/null 2>&1 || icu-config --version | grep '^3.' || [ "${Ubuntu_ver}" == "20" ]; then
     echo "Download icu..."
-    src_url=${mirror_link}/src/icu4c-${icu4c_ver}-src.tgz && Download_src
+    src_url=${mirror_link}/src/icu4c-${icu4c_ver}-src.tgz
+    src_url_backup=https://github.com/unicode-org/icu/releases/download/release-${icu4c_ver//_/-}/icu4c-${icu4c_ver}-src.tgz
+    Download_src; unset src_url_backup
   fi
 
   # General system utils
@@ -24,7 +26,9 @@ checkDownload() {
       src_url_backup=https://github.com/openssl/openssl/releases/download/OpenSSL_${openssl11_ver//./_}/openssl-${openssl11_ver}.tar.gz
       Download_src; unset src_url_backup
     else
-      src_url=${mirror_link}/src/openssl-${openssl_ver}.tar.gz && Download_src
+      src_url=${mirror_link}/src/openssl-${openssl_ver}.tar.gz
+      src_url_backup=https://github.com/openssl/openssl/releases/download/OpenSSL_${openssl_ver//./_}/openssl-${openssl_ver}.tar.gz
+      Download_src; unset src_url_backup
     fi
     echo "Download cacert.pem..."
     src_url=${mirror_link}/src/cacert.pem
@@ -43,42 +47,55 @@ checkDownload() {
   # jemalloc
   if [[ ${nginx_option} =~ ^[1-3]$ ]] || [[ "${db_option}" =~ ^[1-9]$|^1[0-2]$|^1[5-6]$ ]]; then
     echo "Download jemalloc..."
-    src_url=${mirror_link}/src/jemalloc-${jemalloc_ver}.tar.bz2 && Download_src
+    src_url=${mirror_link}/src/jemalloc-${jemalloc_ver}.tar.bz2
+    src_url_backup=https://github.com/jemalloc/jemalloc/releases/download/${jemalloc_ver}/jemalloc-${jemalloc_ver}.tar.bz2
+    Download_src; unset src_url_backup
   fi
 
   # pcre
   if [[ "${nginx_option}" =~ ^[1-3]$ ]] || [ "${apache_flag}" == 'y' ]; then
     echo "Download pcre..."
-    src_url=${mirror_link}/src/pcre-${pcre_ver}.tar.gz && Download_src
+    src_url=${mirror_link}/src/pcre-${pcre_ver}.tar.gz
+    src_url_backup=https://downloads.sourceforge.net/project/pcre/pcre/${pcre_ver}/pcre-${pcre_ver}.tar.gz
+    Download_src; unset src_url_backup
   fi
 
   # nginx/tengine/openresty
   case "${nginx_option}" in
     1)
       echo "Download nginx..."
-      src_url=${mirror_link}/src/nginx-${nginx_ver}.tar.gz && Download_src
+      src_url=${mirror_link}/src/nginx-${nginx_ver}.tar.gz
+      src_url_backup=https://nginx.org/download/nginx-${nginx_ver}.tar.gz
+      Download_src; unset src_url_backup
       ;;
     2)
       echo "Download tengine..."
-      #src_url=http://tengine.taobao.org/download/tengine-${tengine_ver}.tar.gz && Download_src
-      src_url=${mirror_link}/src/tengine-${tengine_ver}.tar.gz && Download_src
+      src_url=${mirror_link}/src/tengine-${tengine_ver}.tar.gz
+      src_url_backup=https://tengine.taobao.org/download/tengine-${tengine_ver}.tar.gz
+      Download_src; unset src_url_backup
       ;;
     3)
       echo "Download openresty..."
-      src_url=${mirror_link}/src/openresty-${openresty_ver}.tar.gz && Download_src
+      src_url=${mirror_link}/src/openresty-${openresty_ver}.tar.gz
+      src_url_backup=https://openresty.org/download/openresty-${openresty_ver}.tar.gz
+      Download_src; unset src_url_backup
       ;;
   esac
 
   # if nginx_option=4 download caddy
   if [ "${nginx_option}" == '4' ]; then
     echo "Download caddy ${caddy_ver}"
-    src_url=${mirror_link}/caddy/v${caddy_ver}/caddy-${caddy_ver}.tar.gz  && Download_src
+    src_url=${mirror_link}/caddy/v${caddy_ver}/caddy-${caddy_ver}.tar.gz
+    src_url_backup=https://github.com/caddyserver/caddy/releases/download/v${caddy_ver}/caddy_${caddy_ver}_linux_amd64.tar.gz
+    Download_src; unset src_url_backup
   fi
 
   # caddy
   if [ "${caddy_flag}" == 'y' ]; then
     echo "Download caddy ${caddy_ver}"
-    src_url=${mirror_link}/caddy/v${caddy_ver}/caddy-${caddy_ver}.tar.gz  && Download_src
+    src_url=${mirror_link}/caddy/v${caddy_ver}/caddy-${caddy_ver}.tar.gz
+    src_url_backup=https://github.com/caddyserver/caddy/releases/download/v${caddy_ver}/caddy_${caddy_ver}_linux_amd64.tar.gz
+    Download_src; unset src_url_backup
   fi
 
   # apache
@@ -87,7 +104,9 @@ checkDownload() {
     src_url=http://archive.apache.org/dist/httpd/httpd-${apache_ver}.tar.gz && Download_src
     src_url=http://archive.apache.org/dist/apr/apr-${apr_ver}.tar.gz && Download_src
     src_url=http://archive.apache.org/dist/apr/apr-util-${apr_util_ver}.tar.gz && Download_src
-    src_url=${mirror_link}/apache/httpd/nghttp2-${nghttp2_ver}.tar.gz && Download_src
+    src_url=${mirror_link}/apache/httpd/nghttp2-${nghttp2_ver}.tar.gz
+    src_url_backup=https://github.com/nghttp2/nghttp2/releases/download/v${nghttp2_ver}/nghttp2-${nghttp2_ver}.tar.gz
+    Download_src; unset src_url_backup
   fi
 
   # tomcat
@@ -252,9 +271,29 @@ checkDownload() {
       5|6|7|8|16)
 	case "${db_option}" in
           5)
+            local detected_ver=""
+            if [ "${dbinstallmethod}" == '1' ]; then
+              detected_ver=$(ls mariadb-10.11.*-linux-systemd-x86_64.tar.gz 2>/dev/null | sort -V | tail -1 | sed -E 's/.*mariadb-(10\.11\.[0-9]+)-linux-systemd-x86_64\.tar\.gz$/\1/')
+            elif [ "${dbinstallmethod}" == '2' ]; then
+              detected_ver=$(ls mariadb-10.11.*.tar.gz 2>/dev/null | grep -v 'linux-systemd' | sort -V | tail -1 | sed -E 's/.*mariadb-(10\.11\.[0-9]+)\.tar\.gz$/\1/')
+            fi
+            if [ -n "${detected_ver}" ]; then
+              mariadb1011_ver="${detected_ver}"
+              echo "${CMSG}Detected local MariaDB 10.11 package in src/: mariadb-${mariadb1011_ver}${CEND}"
+            fi
             mariadb_ver=${mariadb1011_ver}
 	    ;;
           16)
+            local detected_ver=""
+            if [ "${dbinstallmethod}" == '1' ]; then
+              detected_ver=$(ls mariadb-11.4.*-linux-systemd-x86_64.tar.gz 2>/dev/null | sort -V | tail -1 | sed -E 's/.*mariadb-(11\.4\.[0-9]+)-linux-systemd-x86_64\.tar\.gz$/\1/')
+            elif [ "${dbinstallmethod}" == '2' ]; then
+              detected_ver=$(ls mariadb-11.4.*.tar.gz 2>/dev/null | grep -v 'linux-systemd' | sort -V | tail -1 | sed -E 's/.*mariadb-(11\.4\.[0-9]+)\.tar\.gz$/\1/')
+            fi
+            if [ -n "${detected_ver}" ]; then
+              mariadb114_ver="${detected_ver}"
+              echo "${CMSG}Detected local MariaDB 11.4 package in src/: mariadb-${mariadb114_ver}${CEND}"
+            fi
             mariadb_ver=${mariadb114_ver}
 	    ;;
           6)
@@ -281,7 +320,7 @@ checkDownload() {
           DOWN_ADDR_MARIADB_BK=http://mirrors.ustc.edu.cn/mariadb/mariadb-${mariadb_ver}/${FILE_TYPE}
         else
           DOWN_ADDR_MARIADB=${mirror_link}/src/mariadb/mariadb-${mariadb_ver}/${FILE_TYPE}
-          DOWN_ADDR_MARIADB_BK=${mirror_link}/src/mariadb/mariadb-${mariadb_ver}/${FILE_TYPE}
+          DOWN_ADDR_MARIADB_BK=https://archive.mariadb.org/mariadb-${mariadb_ver}/${FILE_TYPE}
         fi
 
         if [ "${db_option}" == '8' ]; then
@@ -290,20 +329,25 @@ checkDownload() {
         fi
 
         echo "Download MariaDB ${FILE_NAME} package..."
-        src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME} && Download_src
-        wget --tries=6 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5
-        MARAIDB_TAR_MD5=$(awk '{print $1}' ${FILE_NAME}.md5)
-        [ -z "${MARAIDB_TAR_MD5}" ] && MARAIDB_TAR_MD5=$(curl -s ${DOWN_ADDR_MARIADB_BK}/md5sums.txt | grep ${FILE_NAME} | awk '{print $1}')
+        src_url=${DOWN_ADDR_MARIADB}/${FILE_NAME}
+        src_url_backup=${DOWN_ADDR_MARIADB_BK}/${FILE_NAME}
+        Download_src
+        unset src_url_backup
+
+        wget --tries=3 -c --no-check-certificate ${DOWN_ADDR_MARIADB}/md5sums.txt -O ${FILE_NAME}.md5 2>/dev/null
+        MARAIDB_TAR_MD5=$(awk -v f="${FILE_NAME}" '($2==f || $2=="./"f || $2=="*"f){print $1}' ${FILE_NAME}.md5 2>/dev/null)
+        [ -z "${MARAIDB_TAR_MD5}" ] && MARAIDB_TAR_MD5=$(curl -fsSL -m 8 "${DOWN_ADDR_MARIADB_BK}/md5sums.txt" 2>/dev/null | awk -v f="${FILE_NAME}" '($2==f || $2=="./"f || $2=="*"f){print $1}')
         tryDlCount=0
-        while [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" != "${MARAIDB_TAR_MD5}" ]; do
+        while [ -n "${MARAIDB_TAR_MD5}" ] && [ "$(md5sum ${FILE_NAME} 2>/dev/null | awk '{print $1}')" != "${MARAIDB_TAR_MD5}" ]; do
           wget -c --no-check-certificate ${DOWN_ADDR_MARIADB_BK}/${FILE_NAME};sleep 1
           let "tryDlCount++"
-          [ "$(md5sum ${FILE_NAME} | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
+          [ "$(md5sum ${FILE_NAME} 2>/dev/null | awk '{print $1}')" == "${MARAIDB_TAR_MD5}" -o "${tryDlCount}" == '6' ] && break || continue
         done
-        if [ "${tryDlCount}" == '6' ]; then
+        if [ -n "${MARAIDB_TAR_MD5}" ] && [ "${tryDlCount}" == '6' ]; then
           echo "${CFAILURE}${FILE_NAME} download failed, Please contact the author! ${CEND}"
           kill -9 $$; exit 1;
         fi
+        rm -f ${FILE_NAME}.md5
         ;;
       9)
         # Percona 8.0
@@ -660,7 +704,9 @@ checkDownload() {
   # pureftpd
   if [ "${pureftpd_flag}" == 'y' ]; then
     echo "Download pureftpd..."
-    src_url=https://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-${pureftpd_ver}.tar.gz && Download_src
+    src_url=${mirror_link}/src/pure-ftpd-${pureftpd_ver}.tar.gz
+    src_url_backup=https://download.pureftpd.org/pub/pure-ftpd/releases/pure-ftpd-${pureftpd_ver}.tar.gz
+    Download_src; unset src_url_backup
   fi
 
   # phpMyAdmin

@@ -31,11 +31,13 @@ do
     SOURCEFILE=`echo $myCONFIGLINE | awk '{ print $1 }'`
     DESTDIR=`echo $myCONFIGLINE | awk '{ print $2 }'`
     DIRECTION=`echo $myCONFIGLINE | awk '{ print $3 }'`
+    [ ! -x "./mscp.exp" ] && chmod +x ./mscp.exp >/dev/null 2>&1
     ./mscp.exp $IP $USER $PASSWD $PORT $SOURCEFILE $DESTDIR $DIRECTION $BWLIMIT $SCPTIMEOUT
 
     [ $? -ne 0 ] && echo -e "\033[31mSCP Try Out All Password Failed\033[0m\n"
 
   elif [ "$myKEYWORD"x == "com"x ]; then
+    [ ! -x "./mssh.exp" ] && chmod +x ./mssh.exp >/dev/null 2>&1
     ./mssh.exp $IP $USER $PASSWD $PORT "${myCONFIGLINE}" $SSHTIMEOUT
     [ $? -ne 0 ] && echo -e "\033[31mSSH Try Out All Password Failed\033[0m\n"
 

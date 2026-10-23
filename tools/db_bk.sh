@@ -25,8 +25,14 @@ OldFile=${backup_dir}/DB_${DBname}_$(date +%Y%m%d --date="${expired_days} days a
 
 [ ! -e "${backup_dir}" ] && mkdir -p ${backup_dir}
 
-DB_tmp=`${db_install_dir}/bin/mysql -uroot -p${dbrootpwd} -e "show databases\G" | grep ${DBname}`
-[ -z "${DB_tmp}" ] && { echo "[${DBname}] not exist" >> ${LogFile} ;  exit 1 ; }
+MYSQL_BIN="${db_install_dir}/bin/mysql"
+[ -x "${db_install_dir}/bin/mariadb" ] && MYSQL_BIN="${db_install_dir}/bin/mariadb"
+
+DUMP_BIN="${db_install_dir}/bin/mysqldump"
+[ -x "${db_install_dir}/bin/mariadb-dump" ] && DUMP_BIN="${db_install_dir}/bin/mariadb-dump"
+
+DB_tmp=`${MYSQL_BIN} -uroot -p${dbrootpwd} -e "show databases\G" 2>/dev/null | grep ${DBname}`
+[ -z "${DB_tmp}" ] && { echo "Database [${DBname}] does not exist!" | tee -a ${LogFile} >&2 ; exit 1 ; }
 
 if [ -n "`ls ${OldFile} 2>/dev/null`" ]; then
   rm -f ${OldFile}
@@ -38,7 +44,7 @@ fi
 if [ -e "${NewFile}" ]; then
   echo "[${NewFile}] The Backup File is exists, Can't Backup" >> ${LogFile}
 else
-  ${db_install_dir}/bin/mysqldump -uroot -p${dbrootpwd} --databases ${DBname} > ${DumpFile}
+  ${DUMP_BIN} -uroot -p${dbrootpwd} --databases ${DBname} > ${DumpFile}
   pushd ${backup_dir} > /dev/null
   tar czf ${NewFile} ${DumpFile##*/} >> ${LogFile} 2>&1
   echo "[${NewFile}] Backup success ">> ${LogFile}

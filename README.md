@@ -13,7 +13,7 @@
 [![MariaDB](https://img.shields.io/badge/MariaDB-10.11%20%7C%2011.4%20LTS-C0765A.svg?logo=mariadb&logoColor=white)](https://mariadb.org)
 [![License](https://img.shields.io/badge/License-Apache--2.0-orange.svg)](https://github.com/wujiit/qilnmp/blob/master/LICENSE)
 
-[官方网站](https://qiling.jingxialai.com) · [官方软件源导航](https://qiling.jingxialai.com/docs/sources.html) · [提交反馈 / Issue](https://github.com/wujiit/qilnmp/issues)
+[官方网站](https://qiling.jingxialai.com/qilnmp) · [官方软件源导航](https://qiling.jingxialai.com/qilnmp/docs/sources.html) · [提交反馈 / Issue](https://github.com/wujiit/qilnmp/issues)
 
 </div>
 
@@ -21,8 +21,8 @@
 
 ## 目录
 
-- [项目渊源与维护声明](#项目渊源与维护声明)
-- [核心设计理念与优势](#核心设计理念与优势)
+- [项目说明与分支信息](#项目说明与分支信息)
+- [对比原版 OneinStack 的调整与精简](#对比原版-oneinstack-的调整与精简)
 - [服务器硬件智能感知与动态调优](#服务器硬件智能感知与动态调优)
 - [数据库选型指南：MySQL 8.0 vs MariaDB LTS](#数据库选型指南mysql-80-vs-mariadb-lts)
 - [操作系统支持与技术断代说明](#操作系统支持与技术断代说明)
@@ -38,43 +38,43 @@
   - [backup.sh 与云对象存储备份](#backupsh-自动化全量备份)
   - [reset_db_root_password.sh 密码重置](#reset_db_root_passwordsh-数据库密码重置)
   - [tools 目录实用体检工具](#tools-目录实用工具)
+- [常用运维与服务管理速查](#常用运维与服务管理速查)
+- [随时快速安装与卸载 PHP 扩展](#随时快速安装与卸载-php-扩展)
 - [默认目录与服务管理速查](#默认目录与服务管理速查)
+- [供应链安全与安全安装防线](#供应链安全与安全安装防线)
 - [常见问题与排错 (FAQ)](#常见问题与排错-faq)
 - [交流社群与联系方式](#交流社群与联系方式)
 - [English Summary](#english-summary)
 
 ---
 
-## 项目渊源与维护声明
+## 项目说明与分支信息
 
 - **上游原始作者**：yeho `<lj2007331 AT gmail.com>`
 - **上游原始仓库**：[oneinstack/oneinstack](https://github.com/oneinstack/oneinstack)
-- **独立分支维护者**：summer `<iticu@qq.com>`
-- **分支官方网站**：[https://qiling.jingxialai.com](https://qiling.jingxialai.com)
-- **分支代码仓库**：[https://github.com/wujiit/qilnmp](https://github.com/wujiit/qilnmp)
+- **分支维护者**：summer `<iticu@qq.com>`
+- **官方网站**：[https://qiling.jingxialai.com/qilnmp](https://qiling.jingxialai.com/qilnmp)
+- **代码仓库**：[https://github.com/wujiit/qilnmp](https://github.com/wujiit/qilnmp)
 - **开源许可证**：[Apache-2.0](https://github.com/wujiit/qilnmp/blob/master/LICENSE)
-
-> [!IMPORTANT]
-> **为什么独立维护 QILNMP 分支？**
-> 很多长期习惯 Linux 纯命令行运维的开发者都深度使用过 OneinStack。这套由 Shell 编写的自动化运维套件轻量、透明、无常驻守护进程。然而由于上游项目后期转让出售并引发社区供应链安全信任危机，曾经放心的基础套件不再让人安心。
-> 
-> 本分支基于此背景创建，旨在为开发者提供一个**纯净、完全开源可审计、剔除陈旧历史包袱（坚决移除 Apache 与 Java/Tomcat）、锁定现代高安全基线**的独立发行版。
 
 ---
 
-## 核心设计理念与优势
+## 对比原版 OneinStack 的调整与精简
 
-| 维度 | QILNMP 方案 | 传统图形面板（如宝塔 / 1Panel 等） |
-|---|---|---|
-| **后台常驻进程** | **0 常驻进程**，执行完毕即彻底释放 | 需长期常驻 1~3 个 Python/Go Web 守护进程 |
-| **内存额外开销** | **0 MB**，所有硬件资源 100% 供给 Web 与数据库 | 额外占用 150MB ~ 500MB+ 常驻内存 |
-| **外部通信** | **完全透明纯净**，离线模式下 0 网络请求 | 后台持续与厂商云端服务器握手、心跳并同步审计日志 |
-| **安全审计** | **100% 纯 Shell 源码**，逻辑明晰可逐行审查 | 核心编译逻辑加密混淆或打包闭源二进制 |
-| **安全基线** | **严控双安全基线**（仅支持修补后的 PHP 8.4/8.5） | 泛滥保留历史 EOL 高危版本，暴露供应链攻击面 |
+QILNMP 是基于 OneinStack 进行精简与现代版本适配的维护分支，主要做了以下服务减法与针对性新增强化：
 
-1. **纯粹专注现代 LNMP**：全面清理了 LAMP/Apache 以及沉重繁琐的 Java/Tomcat 运行时，回归 `Nginx + MySQL/MariaDB + PHP + Redis` 最精炼的高性能技术栈；
-2. **绝对免疫 php2shell 严重 RCE 漏洞**：全面清退 PHP < 8.4（5.x、7.x、8.0、8.1、8.2、8.3 等所有已 EOL 且无法完全修复核心 RCE 漏洞的旧版），代码库与安装链严格锁定修补后的 `PHP 8.4.27` 与 `PHP 8.5.12`；
-3. **100% 离线部署支持**：安装脚本在执行前会优先检测本地 `src/` 目录。只要将所需源码压缩包提前放置好，安装全过程将自动拦截并就地解压编译，**0 外部网络请求**。
+### 1. 移除与精简的服务
+- **移除 Apache (httpd) 与 LAMP 栈**：不再提供 Apache 编译与运行配置，Web 服务专注于高性能 Nginx 架构（支持 Nginx、Tengine、OpenResty、Caddy）；
+- **移除 Tomcat 与 Java/JDK 运行时**：剔除 Tomcat 7/8/9/10 及 Adoptium/OpenJDK 等 Java 运行环境，大幅精简脚本体积与复杂度；
+- **清退 PHP 8.4 以下所有已停服旧版本**：全面移除了 PHP 5.3 ~ 8.3 全系版本（避免历史高危漏洞与 php2shell 严重 RCE 风险），当前仅支持并锁定修补后的 `PHP 8.4.27` 与 `PHP 8.5.12`；
+- **清理已淘汰的陈旧扩展**：删除了 ZendGuardLoader、eAccelerator、mcrypt 等古董扩展与陈旧补丁。
+
+### 2. 新增与强化的专属服务
+- **新增 `wordpress.sh` 一键极速建站服务**：针对主流 WordPress 与 WooCommerce 跨境电商量身定制，自动化完成站点目录构建、自动建库、生成高强度 `wp-config.php`、配置专属 Nginx 伪静态与 Opcache 深度调优，支持 Let's Encrypt 证书自动申领与商业 SSL 证书一键导入；
+- **新增 `security.sh` 专属安全防护与防 CC 模块**：专为 Nginx 架构设计单 IP 限频（15r/s，突发 30）保护，并联动 Fail2ban 自动监控访问日志（`/data/wwwlogs/*nginx.log`），实时将频繁恶意扫描与高频 CC 攻击 IP 送入系统防火墙自动封禁；
+- **新增硬件智能感知与动态调优（`memory.sh`）**：在 1C2G、2C4G 等轻量服务器上自动检测并创建 3GB Swap，防止编译 MySQL / OpenSSL 时因内存耗尽被 Linux OOM 杀进程，并动态自适应分配 PHP-FPM 工作进程树、OPcache 与 MySQL 缓冲池大小；
+- **纯离线部署就地编译**：只要将所需源码压缩包放入本地 `src/` 目录，安装脚本会自动识别并跳过网络下载，完全不产生外部网络请求；
+- **核心组件基线现代化升级**：Nginx 升级至 1.30.6，底层编译链升级至 OpenSSL 3.5.9 LTS，数据库支持 MySQL 8.0/9.0 及 MariaDB 10.11/11.4 LTS。
 
 ---
 
@@ -176,6 +176,18 @@ chmod +x *.sh
 ./install.sh
 ```
 
+### 💡 安装首步交互提示：MD5 校验选择说明
+
+运行 `./install.sh` 时，终端第一道提问为：
+```text
+Do you want to check md5sum? [y/n]:
+```
+* **什么时候选 `n`（直接按回车跳过）**：
+  * **通过 `git clone` 获取的代码仓库**：因为本地直接就是源码目录，并没有预先打包的 `qilnmp.tar.gz` 压缩文件，此时**必须选择 `n`**（如果选 y 会因找不到 `.tar.gz` 提示文件不存在并退出）；
+  * **离线内网部署或自建环境**：无需进行远程哈希对比，直接选 `n` 进入下一步安装。
+* **什么时候选 `y`**：
+  * **下载官方发布的 `qilnmp.tar.gz` 离线压缩包安装**：推荐输入 `y`。脚本将自动比对安装包哈希与官方源 `md5sum.txt`，确保传输过程没有丢包损坏或被劫持。
+
 > [!TIP]
 > 如果编译过程中因网络问题导致 SSH 连接断开，无需惊慌，重新连上服务器后执行 `screen -r qilnmp` 即可无缝切回原安装进度界面。
 
@@ -197,7 +209,7 @@ chmod +x *.sh
 ./install.sh
 ```
 
-*各组件官方纯净源码直链与标准归档命名规范详见：* **[docs/sources.html](https://qiling.jingxialai.com/docs/sources.html)**
+*各组件官方纯净源码直链与标准归档命名规范详见：* **[docs/sources.html](https://qiling.jingxialai.com/qilnmp/docs/sources.html)**
 
 ### 2. 自建私有局域网镜像源（团队多机推荐）
 团队内部若管理多台服务器，强烈推荐使用开源镜像系统 **[MirrorOne (dalao-org/MirrorOne)](https://github.com/dalao-org/MirrorOne)** 在内网或专网搭建专属镜像站。在 `options.conf` 中配置主镜像直链：
@@ -419,12 +431,133 @@ ss -lntp | grep -E ':80|:443|:3306|:6379|:9000'
 
 ---
 
+## 供应链安全与安全安装防线
+
+> **客观工程事实**：在现代复杂的软件工程与网络世界中，**任何项目都无法单方面承诺“100% 绝对安全”**。
+> QILNMP 作为纯 Bash 编写的开源自动化构建套件，自身代码 100% 开源透明、无后门、零后台常驻进程、不收集任何遥测或隐私数据，代码随时可接受公开审计。
+> 然而，LNMP 部署涉及向外部网络下载数十个上游核心组件（Nginx、PHP、MySQL、Redis、OpenSSL 等）。若用户配置了来路不明的第三方软件源、或者遭受了网络 DNS 污染与中间人劫持，外部依赖包存在被投毒的系统性风险，这是任何工具都无法仅凭自身完全消除的。
+
+### 如何最大程度保障生产安装安全？（五重防线指南）
+
+1. **【最稳妥·强烈推荐】预置本地 `src/` 纯离线安装（0 外网请求）**
+   - 在受信任的开发机上，直接从官方直连下载纯净源码包并比对官方公布的散列值（SHA256）；
+   - 将校验无误的压缩包拷贝至服务器 `qilnmp/src/` 目录；
+   - 运行 `./install.sh` 时，脚本检测到本地文件存在将直接原地校验解压并就地编译，**全过程发起 0 个外部网络请求**，从根源上彻底阻断传输层劫持与源投毒风险。
+
+2. **认准官方一手下载源，杜绝未知镜像**
+   - 严禁使用任何未加密 HTTP、不明个人博客或第三方网盘分发的软件包；
+   - 官方各组件标准纯净直链与归档地址已汇总于：[LNMP 常用软件官方源与离线包下载导航](https://qiling.jingxialai.com/qilnmp/docs/sources.html)。
+
+3. **启用包完整性校验（MD5 / SHA256）**
+   - 从网络下载 `.tar.gz` 离线压缩包安装时，确认执行 MD5 校验提示，确保下载过程未被截断或注入；
+   - 对于关键核心包，可通过 `sha256sum` 比对官方公布的哈希值或 GPG 签名。
+
+4. **企业集群建议自建内部受控私有源（MirrorOne）**
+   - 多节点集群严禁直接从公网随意拉包。推荐部署开源 [MirrorOne](https://github.com/dalao-org/MirrorOne) 系统，由企业运维安全人员审核并沉淀官方包，各节点统一通过内网私有镜像拉取，掌控完整的软件物料清单（SBOM）。
+
+5. **底层操作系统与主机安全基线加固**
+   - 拒绝使用任何第三方的“魔改精简版”系统镜像，使用官方主流云发行版（Rocky 9 / Debian 12 / Ubuntu 24.04）；
+   - 安装完成后第一时间运行 `./security.sh --install`，开启系统防火墙、Nginx 单 IP 防 CC 规则与 Fail2ban 自动防御，并配置 SSH 仅允许密钥登录。
+
+### 安全免责声明（Disclaimer）
+QILNMP 遵循开源协议发布。开发者对安装脚本本身的安全性提供透明审计保障，但对用户自行配置的第三方镜像源、下载的外部软件包真实性、网络传输环境以及用户服务器自身的配置安全不承担担保责任。生产环境请务必遵照上述规范进行验证与部署。
+
+---
+
+## 常用运维与服务管理速查
+
+在生产环境中，所有核心组件均支持标准 `service` 与 `systemctl` 两种管理语法：
+
+### 1. 核心服务日常管理命令
+
+| 服务组件 | 重启命令 (Restart) | 平滑热重载 (Reload · 0中断) | 启动 / 停止 | 状态检查 (Status) |
+| :--- | :--- | :--- | :--- | :--- |
+| **PHP-FPM** | `service php-fpm restart`<br>`systemctl restart php-fpm` | `service php-fpm reload`<br>`systemctl reload php-fpm` | `service php-fpm start`<br>`service php-fpm stop` | `service php-fpm status` |
+| **Nginx** | `service nginx restart`<br>`systemctl restart nginx` | `service nginx reload`<br>`systemctl reload nginx` | `service nginx start`<br>`service nginx stop` | `service nginx status` |
+| **MySQL / MariaDB** | `service mysqld restart`<br>`systemctl restart mysqld` | 修改配置后推荐 restart | `service mysqld start`<br>`service mysqld stop` | `service mysqld status` |
+| **Redis** | `service redis-server restart`<br>`systemctl restart redis-server` | `redis-cli config rewrite` | `service redis-server start`<br>`service redis-server stop` | `service redis-server status` |
+| **Pure-FTPd** | `service pureftpd restart`<br>`systemctl restart pureftpd` | 虚拟用户生效无需重载 | `service pureftpd start`<br>`service pureftpd stop` | `service pureftpd status` |
+
+> [!TIP]
+> **生产变更首选平滑重载（Reload）**：在修改 PHP 配置或 Nginx 虚拟主机后，强烈建议优先使用 `service php-fpm reload` 和 `service nginx reload`。这会在保留现有活跃连接的同时无缝加载新配置，完全不中断网站访客访问。
+
+### 2. 日常高频排错与诊断指令
+
+```bash
+# Nginx 配置语法测试（重载前必测，防止配置写错导致 Web 宕机）
+nginx -t
+
+# 查看当前 PHP 已安装并激活的所有扩展模块
+php -m
+
+# 验证特定扩展是否已成功加载（以 fileinfo 为例）
+php -m | grep -i fileinfo
+
+# 查看当前生效的主 php.ini 路径与所有附加 ini 扫描目录
+php --ini
+
+# 查看当前 PHP 准确版本号与编译器架构
+php -v
+
+# 查看系统核心端口监听状态（80, 443, 3306, 6379, 21）
+ss -tulpn || netstat -tlpn
+
+# 查看 PHP-FPM 实际工作进程数与内存开销
+ps aux | grep php-fpm
+
+# 实时追踪 Nginx 全局错误日志
+tail -f /data/wwwlogs/nginx_error.log
+```
+
+---
+
+## 随时快速安装与卸载 PHP 扩展
+
+安装完 LNMP 环境后，若业务程序（如 WordPress、Laravel、ThinkPHP、Discuz 等）提示缺少扩展，**完全不需要重新安装 LNMP**，随时执行单行命令即可独立编译注入：
+
+### 1. 快速安装单个扩展（以 fileinfo 为例）
+
+```bash
+# 自动就地拉取当前 PHP 版本的 ext/fileinfo 源码编译并写入 04-fileinfo.ini
+./install.sh --php_extensions fileinfo
+```
+
+### 2. 批量同时安装多项扩展
+
+用逗号分隔扩展名称即可一次性连贯编译：
+
+```bash
+# 一次性安装 fileinfo、redis、imagick 与 swoole
+./install.sh --php_extensions "fileinfo,redis,imagick,swoole"
+```
+
+### 3. 常见热门 PHP 扩展速查表
+
+| 扩展参数名 | 核心功能与适用场景 | 对应配置文件 |
+| :--- | :--- | :--- |
+| `fileinfo` | 智能探测真实文件 MIME 类型，**WordPress 媒体库上传、Laravel/ThinkPHP 文件系统必备** | `/usr/local/php/etc/php.d/04-fileinfo.ini` |
+| `redis` | 高性能内存对象缓存驱动，**WordPress Redis Object Cache 极速秒开利器** | `/usr/local/php/etc/php.d/04-redis.ini` |
+| `imagick` | ImageMagick 图像增强库，支持 WebP、AVIF、PDF 封面生成与无损压缩裁剪 | `/usr/local/php/etc/php.d/03-imagick.ini` |
+| `swoole` | 高性能异步协程网络通信框架，适用于 Hyperf、Swoft、ThinkPHP 协程微服务 | `/usr/local/php/etc/php.d/04-swoole.ini` |
+| `mongodb` | MongoDB 官方 PECL 客户端驱动，支持现代 BSON 编码与高效 NoSQL 文档交互 | `/usr/local/php/etc/php.d/04-mongodb.ini` |
+| `xdebug` | PHP 源码级断点调试与 Profile 性能分析工具（适合开发与本地测试排错） | `/usr/local/php/etc/php.d/01-xdebug.ini` |
+| `memcached` | 分布式内存缓存模块 | `/usr/local/php/etc/php.d/04-memcached.ini` |
+
+### 4. 安全卸载指定扩展
+
+```bash
+# 仅移除指定扩展的 ini 配置文件，不影响 PHP 主环境与其它的扩展
+./uninstall.sh --php_extensions fileinfo
+```
+
+---
+
 ## 常见问题与排错 (FAQ)
 
 ### Q1：离线部署时，MySQL 官方安装包需要提前放入 `src/` 吗？
 > **答：** MySQL 8.0 官方二进制免编译安装包体积约 850MB，为保持 GitHub 代码仓库极致轻量，该包不预置在仓库中。
 > - 若服务器可访问公网：安装脚本在执行到数据库步骤时会自动从官方直链高速下载；
-> - 若服务器纯内网完全断网：建议在外网电脑从 [官方源导航](https://qiling.jingxialai.com/docs/sources.html) 下载 `mysql-8.0.44-linux-glibc2.28-x86_64.tar.xz`，提前放入 `qilnmp/src/` 目录中即可。
+> - 若服务器纯内网完全断网：建议在外网电脑从 [官方源导航](https://qiling.jingxialai.com/qilnmp/docs/sources.html) 下载 `mysql-8.0.44-linux-glibc2.28-x86_64.tar.xz`，提前放入 `qilnmp/src/` 目录中即可。
 
 ### Q2：跨大版本升级 PHP（如 8.4 升级到 8.5）可以直接用 `upgrade.sh` 吗？
 > **答：不能。** 跨大版本的 Zend API 内部数据结构存在重大破坏性变更，强行原地替换会导致旧扩展（如 imagick、redis）发生段错误崩溃。
@@ -435,6 +568,14 @@ ss -lntp | grep -E ':80|:443|:3306|:6379|:9000'
 ### Q3：为什么 PHP 8.4 与 8.5 共用一套底层安装逻辑？
 > **答：** 这是专为现代安全基线设计的模块化重构（`include/php-modern-common.sh`）。PHP 8.4 与 8.5 共享相同的现代 C11 构建标准、依赖库版本与安全加固参数，统一逻辑既能确保构建质量高度一致，也天然免疫历史上所有的已知核心 RCE 漏洞。
 
+### Q4：执行 install.sh 时提示 “Do you want to check md5sum? [y/n]”，应该选 y 还是 n？
+> **答：**
+> - **通过 `git clone` 获取的代码：请输入 `n` 跳过**（代码已由 Git 自身的 SHA 哈希链保障完整性，且本地没有 `qilnmp.tar.gz` 压缩包，输 y 会报错退出）；
+> - **下载 `qilnmp.tar.gz` 离线压缩包：可输入 `y` 校验**（验证下载包是否完整未被篡改）。脚本目前已支持智能检测本地包是否存在并给出默认推荐值，直接按回车即可。
+
+### Q5：QILNMP 能承诺 100% 绝对安全吗？万一第三方镜像源有问题怎么办？
+> **答：** 任何声称 100% 绝对安全的承诺都是不符合工程事实的。QILNMP 自身开源透明、无后门，但无法控制用户自行配置的第三方源或中间网络环境。为了获得最高等级的安全保障，**强烈建议自备离线包放入 `src/` 目录**进行 100% 纯本地离线安装（全过程 0 外部网络请求），或在企业内网搭建 [MirrorOne](https://github.com/dalao-org/MirrorOne) 私有镜像源，并在部署后运行 `./security.sh --install` 加固服务器。
+
 ---
 
 ## 交流社群与联系方式
@@ -444,19 +585,18 @@ ss -lntp | grep -E ':80|:443|:3306|:6379|:9000'
 - **WordPress 站长技术交流群**：`16966111`
 - **WooCommerce 跨境电商交流群**：`580246438`
 - **灵简 AI 研发交流群**：`591117073`
-- **启灵件技术支持群**：`200766709`
-- **维护者个人 QQ / 微信**：`19577566`
+- **启灵软件支持群**：`200766709`
 - **技术支持与商务联系邮箱**：`iticu@qq.com`
 
 ---
 
 ## English Summary
 
-**QILNMP** is a modernized, lightweight, and community-maintained Linux LNMP automated deployment and maintenance suite forked from OneinStack.
+**QILNMP** is a streamlined, lightweight Linux LNMP automated deployment and maintenance suite forked from OneinStack.
 
-- **Pure LNMP Focus**: Completely stripped of legacy Apache (LAMP) and Java (Tomcat/JDK) runtime overhead;
-- **Dual Security Baselines**: Strictly locked to **PHP 8.4.27** and **PHP 8.5.12**, entirely immune to the severe php2shell RCE vulnerability;
-- **Zero Background Daemons**: 0 MB residual memory footprint compared to resource-heavy GUI control panels;
+- **Streamlined Stack**: Removed Apache (LAMP) and Java (Tomcat/JDK) runtime components, focusing purely on high-performance Nginx;
+- **Dual Security Baselines**: Strictly locked to **PHP 8.4.27** and **PHP 8.5.12**, eliminating all legacy EOL PHP versions and known core vulnerabilities;
+- **Lightweight & Clean**: Shell-native automation with zero background daemon processes;
 - **Hardware-Aware Auto-Tuning**: Dynamically adapts Swap, PHP-FPM worker pools, OPcache, and MySQL InnoDB buffer pool size according to system resources (e.g. 2C4G, 4C8G, 8C16G);
 - **Production Database Advisory**: Clear selection metrics between MariaDB LTS (optimized for ≤4GB RAM & CMS) and MySQL 8.0 (native binary JSON & cloud RDS alignment);
 - **100% Offline & Private Mirror Ready**: Bypasses all outbound network requests if packages are pre-placed in `src/`, fully compatible with [MirrorOne](https://github.com/dalao-org/MirrorOne);

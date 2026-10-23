@@ -61,10 +61,10 @@
 
 常见版本变量：
 
-- `mariadb1011_ver`
+- `mariadb1011_ver`（默认 `10.11.16`，支持放置本地 `mariadb-10.11.*` 自动识别）
+- `mariadb114_ver`（默认 `11.4.13`，支持放置本地 `mariadb-11.4.*` 如 `mariadb-11.4.13-linux-systemd-x86_64.tar.gz` 自动识别）
 - `mariadb105_ver`
 - `mariadb104_ver`
-- `mariadb114_ver`
 
 ## 3. 常见可选组件（按需）
 

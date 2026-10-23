@@ -387,7 +387,7 @@ What Are You Doing?
     [ ! -e acme.sh-master.tar.gz ] && wget -qc ${mirror_link}/src/acme.sh-master.tar.gz
     tar xzf acme.sh-master.tar.gz
     pushd acme.sh-master > /dev/null
-    ./acme.sh --install > /dev/null 2>&1
+    bash ./acme.sh --install > /dev/null 2>&1
     popd > /dev/null
     popd > /dev/null
   fi

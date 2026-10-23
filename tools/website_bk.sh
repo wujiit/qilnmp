@@ -21,7 +21,7 @@ LogFile=${backup_dir}/web.log
 NewFile=${backup_dir}/Web_${WebSite}_$(date +%Y%m%d_%H).tgz
 OldFile=${backup_dir}/Web_${WebSite}_$(date +%Y%m%d --date="${expired_days} days ago")*.tgz
 [ ! -e "${backup_dir}" ] && mkdir -p ${backup_dir}
-[ ! -e "${wwwroot_dir}/${WebSite}" ] && { echo "[${wwwroot_dir}/${WebSite}] not exist" >> ${LogFile} ;  exit 1 ; }
+[ ! -e "${wwwroot_dir}/${WebSite}" ] && { echo "Website directory [${wwwroot_dir}/${WebSite}] does not exist!" | tee -a ${LogFile} >&2 ; exit 1 ; }
 
 if [ `du -sm "${wwwroot_dir}/${WebSite}" | awk '{print $1}'` -lt 1024 ]; then
   if [ -n "`ls ${OldFile} 2>/dev/null`" ]; then
