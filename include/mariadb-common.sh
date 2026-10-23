@@ -97,22 +97,23 @@ skip-name-resolve
 #skip-networking
 back_log = 300
 
-max_connections = 1000
+max_connections = 200
 max_connect_errors = 6000
 open_files_limit = 65535
-table_open_cache = 128
-max_allowed_packet = 500M
+table_open_cache = 1024
+table_definition_cache = 1024
+max_allowed_packet = 64M
 binlog_cache_size = 1M
-max_heap_table_size = 8M
-tmp_table_size = 16M
+max_heap_table_size = 64M
+tmp_table_size = 64M
 
-read_buffer_size = 2M
-read_rnd_buffer_size = 8M
-sort_buffer_size = 8M
-join_buffer_size = 8M
-key_buffer_size = 4M
+read_buffer_size = 256K
+read_rnd_buffer_size = 512K
+sort_buffer_size = 1M
+join_buffer_size = 1M
+key_buffer_size = 32M
 
-thread_cache_size = 8
+thread_cache_size = 16
 
 ${query_cache_block}ft_min_word_len = 4
 
@@ -133,60 +134,72 @@ skip-external-locking
 
 default_storage_engine = InnoDB
 innodb_file_per_table = 1
-innodb_open_files = 500
-innodb_buffer_pool_size = 64M
+innodb_open_files = 1000
+innodb_buffer_pool_size = 128M
 innodb_write_io_threads = 4
 innodb_read_io_threads = 4
 innodb_purge_threads = 1
 innodb_flush_log_at_trx_commit = 2
-innodb_log_buffer_size = 2M
-innodb_log_file_size = 32M
+innodb_log_buffer_size = 16M
+innodb_log_file_size = 64M
 innodb_max_dirty_pages_pct = 90
-innodb_lock_wait_timeout = 120
+innodb_lock_wait_timeout = 60
 
 bulk_insert_buffer_size = 8M
-myisam_sort_buffer_size = 8M
+myisam_sort_buffer_size = 16M
 myisam_max_sort_file_size = 10G
 
-interactive_timeout = 28800
-wait_timeout = 28800
+interactive_timeout = 300
+wait_timeout = 300
 
 [mysqldump]
 quick
-max_allowed_packet = 500M
+max_allowed_packet = 64M
 
 [myisamchk]
-key_buffer_size = 8M
-sort_buffer_size = 8M
-read_buffer = 4M
-write_buffer = 4M
+key_buffer_size = 32M
+sort_buffer_size = 1M
+read_buffer = 1M
+write_buffer = 1M
 EOF
 
-  sed -i "s@max_connections.*@max_connections = $((${Mem}/3))@" /etc/my.cnf
-  if [ ${Mem} -gt 1500 -a ${Mem} -le 2500 ]; then
-    sed -i 's@^thread_cache_size.*@thread_cache_size = 16@' /etc/my.cnf
-    [ "${enable_query_cache}" == 'y' ] && sed -i 's@^query_cache_size.*@query_cache_size = 16M@' /etc/my.cnf
-    sed -i 's@^myisam_sort_buffer_size.*@myisam_sort_buffer_size = 16M@' /etc/my.cnf
+  if [ ${Mem} -le 1500 ]; then
+    sed -i 's@^max_connections.*@max_connections = 100@' /etc/my.cnf
+    sed -i 's@^thread_cache_size.*@thread_cache_size = 8@' /etc/my.cnf
     sed -i 's@^key_buffer_size.*@key_buffer_size = 16M@' /etc/my.cnf
     sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 128M@' /etc/my.cnf
-    sed -i 's@^tmp_table_size.*@tmp_table_size = 32M@' /etc/my.cnf
     sed -i 's@^table_open_cache.*@table_open_cache = 256@' /etc/my.cnf
-  elif [ ${Mem} -gt 2500 -a ${Mem} -le 3500 ]; then
-    sed -i 's@^thread_cache_size.*@thread_cache_size = 32@' /etc/my.cnf
-    [ "${enable_query_cache}" == 'y' ] && sed -i 's@^query_cache_size.*@query_cache_size = 32M@' /etc/my.cnf
-    sed -i 's@^myisam_sort_buffer_size.*@myisam_sort_buffer_size = 32M@' /etc/my.cnf
-    sed -i 's@^key_buffer_size.*@key_buffer_size = 64M@' /etc/my.cnf
-    sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 512M@' /etc/my.cnf
-    sed -i 's@^tmp_table_size.*@tmp_table_size = 64M@' /etc/my.cnf
+  elif [ ${Mem} -gt 1500 -a ${Mem} -le 2500 ]; then
+    sed -i 's@^max_connections.*@max_connections = 150@' /etc/my.cnf
+    sed -i 's@^thread_cache_size.*@thread_cache_size = 16@' /etc/my.cnf
+    sed -i 's@^key_buffer_size.*@key_buffer_size = 32M@' /etc/my.cnf
+    sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 256M@' /etc/my.cnf
     sed -i 's@^table_open_cache.*@table_open_cache = 512@' /etc/my.cnf
-  elif [ ${Mem} -gt 3500 ]; then
-    sed -i 's@^thread_cache_size.*@thread_cache_size = 64@' /etc/my.cnf
-    [ "${enable_query_cache}" == 'y' ] && sed -i 's@^query_cache_size.*@query_cache_size = 64M@' /etc/my.cnf
-    sed -i 's@^myisam_sort_buffer_size.*@myisam_sort_buffer_size = 64M@' /etc/my.cnf
-    sed -i 's@^key_buffer_size.*@key_buffer_size = 256M@' /etc/my.cnf
-    sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 1024M@' /etc/my.cnf
-    sed -i 's@^tmp_table_size.*@tmp_table_size = 128M@' /etc/my.cnf
+  elif [ ${Mem} -gt 2500 -a ${Mem} -le 4500 ]; then
+    sed -i 's@^max_connections.*@max_connections = 200@' /etc/my.cnf
+    sed -i 's@^thread_cache_size.*@thread_cache_size = 32@' /etc/my.cnf
+    sed -i 's@^key_buffer_size.*@key_buffer_size = 32M@' /etc/my.cnf
+    sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 768M@' /etc/my.cnf
     sed -i 's@^table_open_cache.*@table_open_cache = 1024@' /etc/my.cnf
+  elif [ ${Mem} -gt 4500 -a ${Mem} -le 8500 ]; then
+    sed -i 's@^max_connections.*@max_connections = 400@' /etc/my.cnf
+    sed -i 's@^thread_cache_size.*@thread_cache_size = 48@' /etc/my.cnf
+    sed -i 's@^key_buffer_size.*@key_buffer_size = 64M@' /etc/my.cnf
+    sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 2048M@' /etc/my.cnf
+    sed -i 's@^table_open_cache.*@table_open_cache = 2048@' /etc/my.cnf
+  elif [ ${Mem} -gt 8500 -a ${Mem} -le 16500 ]; then
+    sed -i 's@^max_connections.*@max_connections = 800@' /etc/my.cnf
+    sed -i 's@^thread_cache_size.*@thread_cache_size = 64@' /etc/my.cnf
+    sed -i 's@^key_buffer_size.*@key_buffer_size = 128M@' /etc/my.cnf
+    sed -i 's@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = 6144M@' /etc/my.cnf
+    sed -i 's@^table_open_cache.*@table_open_cache = 4096@' /etc/my.cnf
+  elif [ ${Mem} -gt 16500 ]; then
+    local db_pool_mb=$(($Mem * 50 / 100))
+    sed -i "s@^max_connections.*@max_connections = 1200@" /etc/my.cnf
+    sed -i 's@^thread_cache_size.*@thread_cache_size = 128@' /etc/my.cnf
+    sed -i 's@^key_buffer_size.*@key_buffer_size = 256M@' /etc/my.cnf
+    sed -i "s@^innodb_buffer_pool_size.*@innodb_buffer_pool_size = ${db_pool_mb}M@" /etc/my.cnf
+    sed -i 's@^table_open_cache.*@table_open_cache = 8192@' /etc/my.cnf
   fi
 }
 

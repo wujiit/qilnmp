@@ -30,7 +30,7 @@ Install_redis_server() {
     sed -i 's@daemonize no@daemonize yes@' ${redis_install_dir}/etc/redis.conf
     sed -i "s@^# bind 127.0.0.1@bind 127.0.0.1@" ${redis_install_dir}/etc/redis.conf
     redis_maxmemory=`expr $Mem / 8`000000
-    [ -z "`grep ^maxmemory ${redis_install_dir}/etc/redis.conf`" ] && sed -i "s@maxmemory <bytes>@maxmemory <bytes>\nmaxmemory `expr $Mem / 8`000000@" ${redis_install_dir}/etc/redis.conf
+    [ -z "`grep ^maxmemory ${redis_install_dir}/etc/redis.conf`" ] && sed -i "s@maxmemory <bytes>@maxmemory <bytes>\nmaxmemory `expr $Mem / 8`000000\nmaxmemory-policy allkeys-lru@" ${redis_install_dir}/etc/redis.conf
     echo "${CSUCCESS}Redis-server installed successfully! ${CEND}"
     popd > /dev/null
     rm -rf redis-${redis_ver}

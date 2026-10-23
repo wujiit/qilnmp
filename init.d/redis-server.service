@@ -8,10 +8,8 @@ PIDFile=/var/run/redis/redis.pid
 User=redis
 Group=redis
 
-Environment=statedir=/var/run/redis
-PermissionsStartOnly=true
-ExecStartPre=/bin/mkdir -p ${statedir}
-ExecStartPre=/bin/chown -R redis:redis ${statedir}
+RuntimeDirectory=redis
+RuntimeDirectoryMode=0755
 ExecStart=/usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf
 ExecStop=/bin/kill -s TERM $MAINPID
 Restart=always
