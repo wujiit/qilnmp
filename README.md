@@ -304,16 +304,27 @@ mirror_fallback_links='https://mirror-backup.yourdomain.com'
 
 ---
 
-### `security.sh` 基础安全与防 CC 模块
+### `security.sh` 系统综合安全中心（防 CC + 网站防篡改）
 
-针对 Nginx 栈提供单 IP 限频（15r/s，突发 30）保护，并联动 Fail2ban 实时分析 `/data/wwwlogs/*nginx.log`，对恶意扫描与高频 CC 攻击 IP 实施系统防火墙自动封禁：
+直接运行 `./security.sh` 可进入**交互式中文安全中心菜单**。全面整合 Nginx 单 IP 限流与 Fail2ban 防 CC 暴破、网站防篡改、上传目录木马隔离以及专用于后台更新的临时维护模式：
 
 ```bash
-./security.sh --install     # 安装并部署防 CC 模块与 Fail2ban 规则
-./security.sh --status      # 查看当前防护运行状态与已封禁的攻击 IP 清单
-./security.sh --disable     # 临时停用限频防护（保留配置文件）
-./security.sh --enable      # 重新启用防护
-./security.sh --uninstall   # 彻底卸载防护规则
+# 交互式管理（推荐）：直接进入中文彩色可视化菜单，支持数字选择与全部网站一键处理
+./security.sh
+
+# 命令行快捷操作：
+# 1. 防 CC 与暴力破解模块
+./security.sh --install                   # 安装并部署防 CC 模块与 Fail2ban 规则
+./security.sh --status                    # 查看全站综合安全状态与已封禁的攻击 IP 清单
+./security.sh --disable                   # 临时停用限频防护（保留配置文件）
+./security.sh --enable                    # 重新启用防护
+./security.sh --uninstall                 # 彻底卸载防护规则
+
+# 2. 网站防篡改与木马隔离模块
+./security.sh --tamper-lock domain.com    # 开启防篡改（核心配置只读锁定 + 上传目录木马隔离）
+./security.sh --tamper-unlock domain.com 15 # 临时开启维护模式（解锁 15 分钟，到期自动重新加锁）
+./security.sh --tamper-disable domain.com # 关闭指定站点的防篡改防护
+./security.sh --tamper-status             # 查看全站防篡改锁定状态与维护倒计时
 ```
 
 ---
